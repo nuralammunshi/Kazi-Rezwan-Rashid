@@ -1,0 +1,274 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}Profile &amp; Site Settings — Portfolio Hub{% endblock %}
+
+{% block content %}
+<div class="card-header" style="margin-bottom: 24px;">
+  <div>
+    <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700;">Profile &amp; Site Settings</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">Update branding, biography, contact information, resume PDF, and architecture diagram.</p>
+  </div>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <!-- Identity & Hero -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #818cf8;">
+      <span class="lnr lnr-user"></span> Brand Identity &amp; Hero Headline
+    </div>
+    
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Full Name / Brand Name *</label>
+        {{ form.name }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Brand Kicker (Under Logo)</label>
+        {{ form.brand_kicker }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Status Chip (Hero Pill Badge)</label>
+        {{ form.status_chip }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Hero Title (H1 Headline)</label>
+        {{ form.hero_title }}
+        <div class="form-help">Use Enter for a line break in the headline.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Hero Lead Paragraph</label>
+      {{ form.hero_lead }}
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Avatar Photo</label>
+        {{ form.avatar }}
+        {% if profile.avatar %}
+          <div style="margin-top: 8px; font-size: 12px; color: #94a3b8;">
+            Current: <a href="{{ profile.avatar.url }}" target="_blank" style="color: #818cf8;">View file</a>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Résumé PDF Document</label>
+        {{ form.resume_file }}
+        {% if profile.resume_file %}
+          <div style="margin-top: 8px; font-size: 12px; color: #94a3b8;">
+            Current: <a href="{% url 'resume' %}?download=1" target="_blank" style="color: #818cf8; font-weight: 600;">Download PDF (100 KB)</a> &middot; <a href="{% url 'resume' %}" target="_blank" style="color: #a78bfa;">View CV</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact & Socials -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #34d399;">
+      <span class="lnr lnr-link"></span> Contact &amp; Social Profiles
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        {{ form.email }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">LinkedIn URL</label>
+        {{ form.linkedin_url }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">GitHub URL</label>
+        {{ form.github_url }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Medium URL</label>
+        {{ form.medium_url }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">External Link Title (e.g. The Wife / Blog)</label>
+        {{ form.external_link_title }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">External Link URL</label>
+        {{ form.external_link_url }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Demo Card -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #c084fc;">
+      <span class="lnr lnr-laptop-phone"></span> Featured Live Demo Card
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Demo Title</label>
+        {{ form.demo_title }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Demo Badge Text</label>
+        {{ form.demo_badge }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Demo Summary</label>
+      {{ form.demo_description }}
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Tech Tags (Comma separated)</label>
+        {{ form.demo_tags }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Live App URL</label>
+        {{ form.demo_url }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Browser Bar Domain Label</label>
+        {{ form.demo_domain_label }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Case Study Link Slug</label>
+        {{ form.demo_case_study_slug }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Demo Screenshot Image</label>
+      {{ form.demo_image }}
+    </div>
+  </div>
+
+  <!-- Architecture Diagram -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #f59e0b;">
+      <span class="lnr lnr-diagram"></span> Hero Architecture Diagram
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Diagram Head Label</label>
+        {{ form.diagram_head_label }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stream Indicator Label</label>
+        {{ form.diagram_stream_label }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Source Node</label>
+        {{ form.diagram_source }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Transport Node</label>
+        {{ form.diagram_transport }}
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+      <div class="form-group">
+        <label class="form-label">Model 1 (Title / Sub)</label>
+        {{ form.diagram_node_1_title }}
+        <div style="margin-top: 6px;">{{ form.diagram_node_1_sub }}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Model 2 (Title / Sub)</label>
+        {{ form.diagram_node_2_title }}
+        <div style="margin-top: 6px;">{{ form.diagram_node_2_sub }}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Model 3 (Title / Sub)</label>
+        {{ form.diagram_node_3_title }}
+        <div style="margin-top: 6px;">{{ form.diagram_node_3_sub }}</div>
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Final Node Eyebrow</label>
+        {{ form.diagram_final_eyebrow }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Final Node Title</label>
+        {{ form.diagram_final_title }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Diagram Caption</label>
+      {{ form.diagram_caption }}
+    </div>
+  </div>
+
+  <!-- About Me & Bio -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #38bdf8;">
+      <span class="lnr lnr-book"></span> Biography &amp; About Pages
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Home Page Pull Quote</label>
+      {{ form.about_pull_quote }}
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Home Page Paragraph 1</label>
+        {{ form.about_p1 }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Home Page Paragraph 2</label>
+        {{ form.about_p2 }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">About Page Hero Lead</label>
+      {{ form.about_hero_lead }}
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Full About Bio (Part 1)</label>
+        {{ form.about_full_p1 }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full About Bio (Part 2)</label>
+        {{ form.about_full_p2 }}
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 14px; margin-top: 10px; margin-bottom: 40px;">
+    <button class="btn-primary" type="submit" style="padding: 12px 28px; font-size: 15px;">
+      <span class="lnr lnr-checkmark-circle"></span> Save Profile Changes
+    </button>
+    <a class="btn-secondary" href="{% url 'dashboard_home' %}" style="padding: 12px 24px;">Cancel</a>
+  </div>
+</form>
+{% endblock %}

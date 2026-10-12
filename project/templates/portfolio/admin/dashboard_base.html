@@ -1,0 +1,445 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Portfolio Management Hub{% endblock %}</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/linearicons.css' %}">
+  <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+
+  <style>
+    :root {
+      --dash-bg: #0f172a;
+      --dash-card: #1e293b;
+      --dash-border: rgba(255, 255, 255, 0.08);
+      --dash-primary: #6366f1;
+      --dash-primary-hover: #4f46e5;
+      --dash-text: #f8fafc;
+      --dash-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--dash-bg);
+      color: var(--dash-text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar */
+    .dash-sidebar {
+      width: 270px;
+      background: #111827;
+      border-right: 1px solid var(--dash-border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+    .dash-brand {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--dash-border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .dash-brand img { width: 32px; height: 32px; }
+    .dash-brand-title { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -0.3px; }
+    .dash-brand-sub { font-size: 11px; color: var(--dash-primary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .dash-nav {
+      padding: 16px 12px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .nav-header {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      font-weight: 700;
+      padding: 12px 12px 6px;
+    }
+    .dash-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      color: var(--dash-muted);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .dash-nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+    }
+    .dash-nav-item.is-active {
+      background: var(--dash-primary);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+    }
+    .dash-nav-item span.icon { font-size: 16px; width: 20px; text-align: center; }
+    .dash-badge {
+      margin-left: auto;
+      background: #ef4444;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    /* Main Area */
+    .dash-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* Topbar */
+    .dash-topbar {
+      height: 68px;
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--dash-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .sidebar-toggle {
+      background: none; border: none; color: var(--dash-muted);
+      font-size: 20px; cursor: pointer; display: none;
+    }
+    .live-site-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0; border: 1px solid var(--dash-border);
+      padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .live-site-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+    
+    .topbar-right { display: flex; align-items: center; gap: 18px; }
+    .admin-profile-pill {
+      display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600;
+    }
+    .admin-avatar {
+      width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--dash-primary);
+    }
+    .logout-btn {
+      background: rgba(239, 68, 68, 0.15); color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3); padding: 6px 12px;
+      border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .logout-btn:hover { background: #ef4444; color: #fff; }
+
+    /* Content Area */
+    .dash-content {
+      padding: 32px 36px;
+      flex: 1;
+    }
+
+    /* Flash Messages */
+    .dash-alert {
+      padding: 14px 20px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    /* Cards & Tables */
+    .content-card {
+      background: var(--dash-card);
+      border: 1px solid var(--dash-border);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 24px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--dash-border);
+    }
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .btn-primary {
+      background: var(--dash-primary);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: var(--dash-primary-hover); }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border: 1px solid var(--dash-border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.14); }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-danger:hover { background: #ef4444; color: #fff; }
+
+    /* Tables */
+    .dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .dash-table th {
+      text-align: left;
+      padding: 12px 14px;
+      color: var(--dash-muted);
+      border-bottom: 1px solid var(--dash-border);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .dash-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--dash-border);
+      color: #cbd5e1;
+      vertical-align: middle;
+    }
+    .dash-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .table-actions { display: flex; align-items: center; gap: 8px; }
+
+    /* Form controls */
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 8px; }
+    .form-help { font-size: 12px; color: var(--dash-muted); margin-top: 5px; }
+    .form-input, input[type="text"], input[type="email"], input[type="url"], input[type="number"], textarea, select {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--dash-border);
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus, input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--dash-primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    @media (max-width: 900px) {
+      .dash-sidebar { position: fixed; transform: translateX(-100%); }
+      .dash-sidebar.is-open { transform: translateX(0); }
+      .sidebar-toggle { display: block; }
+      .dash-content { padding: 20px; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside class="dash-sidebar" id="sidebar">
+    <a class="dash-brand" href="{% url 'dashboard_home' %}">
+      <img src="{% static 'img/favicon.svg' %}" alt="">
+      <div>
+        <div class="dash-brand-title">Portfolio Hub</div>
+        <div class="dash-brand-sub">Admin Control</div>
+      </div>
+    </a>
+
+    <nav class="dash-nav">
+      <div class="nav-header">Overview</div>
+      <a class="dash-nav-item {% if active_section == 'dashboard' %}is-active{% endif %}" href="{% url 'dashboard_home' %}">
+        <span class="icon lnr lnr-screen"></span>
+        <span>Dashboard Overview</span>
+      </a>
+
+      <!-- HOME MENU -->
+      <div class="nav-header" style="color: #818cf8; font-weight: 800; display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+        <span class="lnr lnr-home"></span> HOME MENU
+      </div>
+      <a class="dash-nav-item {% if active_section == 'home_hero' %}is-active{% endif %}" href="{% url 'dashboard_home_hero' %}" style="padding-left: 20px;">
+        <span class="icon lnr lnr-star"></span>
+        <span>Hero Section &amp; Stats</span>
+      </a>
+      <a class="dash-nav-item {% if active_section == 'home_work' %}is-active{% endif %}" href="{% url 'dashboard_home_work' %}" style="padding-left: 20px;">
+        <span class="icon lnr lnr-magic-wand"></span>
+        <span>What I work on</span>
+      </a>
+      <a class="dash-nav-item {% if active_section == 'home_skills' %}is-active{% endif %}" href="{% url 'dashboard_home_skills' %}" style="padding-left: 20px;">
+        <span class="icon lnr lnr-code"></span>
+        <span>Skills &amp; tooling</span>
+      </a>
+
+      <!-- ABOUT MENU -->
+      <div class="nav-header" style="color: #34d399; font-weight: 800; display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+        <span class="lnr lnr-user"></span> ABOUT MENU
+      </div>
+      <a class="dash-nav-item {% if active_section == 'about_me' %}is-active{% endif %}" href="{% url 'dashboard_about_me' %}" style="padding-left: 20px;">
+        <span class="icon lnr lnr-user"></span>
+        <span>About me</span>
+      </a>
+      <a class="dash-nav-item {% if active_section == 'about_exp' %}is-active{% endif %}" href="{% url 'dashboard_about_exp' %}" style="padding-left: 20px;">
+        <span class="icon lnr lnr-briefcase"></span>
+        <span>Experience</span>
+      </a>
+      <a class="dash-nav-item {% if active_section == 'about_references' %}is-active{% endif %}" href="{% url 'dashboard_references' %}" style="padding-left: 20px;">
+        <span class="icon lnr lnr-users"></span>
+        <span>References</span>
+      </a>
+
+      <!-- PROJECT MENU -->
+      <div class="nav-header" style="color: #c084fc; font-weight: 800; display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+        <span class="lnr lnr-layers"></span> PROJECT MENU
+      </div>
+      <a class="dash-nav-item {% if active_section == 'project_menu' %}is-active{% endif %}" href="{% url 'dashboard_project_menu' %}" style="padding-left: 20px;">
+        <span class="icon lnr lnr-layers"></span>
+        <span>All Projects (Upload &amp; CRUD)</span>
+      </a>
+      <a class="dash-nav-item" href="{% url 'dashboard_project_add' %}" style="padding-left: 20px;">
+        <span class="icon lnr lnr-plus-circle"></span>
+        <span>+ Add New Project</span>
+      </a>
+      <a class="dash-nav-item" href="{% url 'dashboard_category_add' %}" style="padding-left: 20px;">
+        <span class="icon lnr lnr-tag"></span>
+        <span>+ Add Category Tab</span>
+      </a>
+
+      <!-- OTHER SECTIONS -->
+      <div class="nav-header" style="margin-top: 8px;">Gallery &amp; Inbox</div>
+      <a class="dash-nav-item {% if active_section == 'gallery' %}is-active{% endif %}" href="{% url 'dashboard_gallery' %}">
+        <span class="icon lnr lnr-picture"></span>
+        <span>Companion Gallery</span>
+      </a>
+
+      <a class="dash-nav-item {% if active_section == 'messages' %}is-active{% endif %}" href="{% url 'dashboard_messages' %}">
+        <span class="icon lnr lnr-bubble"></span>
+        <span>Visitor Messages</span>
+        {% if messages_unread %}
+          <span class="dash-badge">{{ messages_unread }}</span>
+        {% endif %}
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="dash-main">
+    <header class="dash-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle"><span class="lnr lnr-menu"></span></button>
+        <a class="live-site-btn" href="{% url 'home' %}" target="_blank">
+          <span class="lnr lnr-arrow-up-right"></span>
+          <span>View Live Site</span>
+        </a>
+      </div>
+
+      <div class="topbar-right">
+        <div class="admin-profile-pill">
+          {% if profile.avatar %}
+            <img class="admin-avatar" src="{{ profile.avatar.url }}" alt="{{ request.user.username }}">
+          {% else %}
+            <img class="admin-avatar" src="{% static 'img/crop.jpg' %}" alt="{{ request.user.username }}">
+          {% endif %}
+          <span>{{ request.user.username }}</span>
+        </div>
+        <a class="logout-btn" href="{% url 'admin_logout' %}">Log Out</a>
+      </div>
+    </header>
+
+    <div class="dash-content">
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="dash-alert">
+            <span class="lnr lnr-checkmark-circle"></span>
+            <span>{{ msg }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  <script>
+    // Sidebar toggle for mobile
+    var toggleBtn = document.getElementById('sidebarToggle');
+    var sidebar = document.getElementById('sidebar');
+    if (toggleBtn && sidebar) {
+      toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('is-open');
+      });
+    }
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

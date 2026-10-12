@@ -1,0 +1,356 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}{{ profile.name }} — {{ profile.status_chip }}{% endblock %}
+
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero grid-bg">
+  <div class="wrap">
+    <div class="hero-origin-flow">
+      <span class="hero-origin-anchor" aria-hidden="true"></span>
+      {% if profile.avatar %}
+        <img class="hero-avatar" src="{{ profile.avatar.url }}" alt="{{ profile.name }}">
+      {% else %}
+        <img class="hero-avatar" src="{% static 'img/crop.jpg' %}" alt="{{ profile.name }}">
+      {% endif %}
+      
+      <div class="status-chip">
+        <span class="live-dot"></span>
+        <span>{{ profile.status_chip }}</span>
+      </div>
+
+      <h1 class="hero-h1">{{ profile.hero_title|linebreaksbr }}</h1>
+      <p class="hero-lead">{{ profile.hero_lead }}</p>
+
+      <div class="stats">
+        {% for stat in stats %}
+          <div>
+            <div class="stat-num">{{ stat.number }}</div>
+            <div class="stat-lbl">{{ stat.label }}</div>
+          </div>
+        {% empty %}
+          <div>
+            <div class="stat-num">3+</div>
+            <div class="stat-lbl">IEEE Research Papers</div>
+          </div>
+          <div>
+            <div class="stat-num">4+</div>
+            <div class="stat-lbl">Production AI Systems</div>
+          </div>
+          <div>
+            <div class="stat-num">MSc & BSc</div>
+            <div class="stat-lbl">Computer Science & Eng.</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="btn-row">
+        <a class="btn btn--grad btn--lg" href="#work">View portfolio</a>
+        {% if profile.resume_file %}
+          <a class="btn btn--ghost btn--lg" href="{{ profile.resume_file.url }}" target="_blank">R&eacute;sum&eacute;</a>
+        {% else %}
+          <a class="btn btn--ghost btn--lg" href="{% static 'media/HarrisonJansmaResume.pdf' %}" target="_blank">R&eacute;sum&eacute;</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Architecture diagram: animated shape of systems -->
+    <div class="diagram">
+      <div class="diagram-head">
+        <span class="diagram-head-label">{{ profile.diagram_head_label }}</span>
+        <span class="diagram-head-live"><span class="live-dot"></span>{{ profile.diagram_stream_label }}</span>
+      </div>
+
+      <div class="node">
+        <div class="node-eyebrow">source</div>
+        <div class="node-title">{{ profile.diagram_source }}</div>
+      </div>
+
+      <div class="trunk"><span class="packet"></span></div>
+
+      <div class="node">
+        <div class="node-eyebrow">transport</div>
+        <div class="node-title">{{ profile.diagram_transport }}</div>
+      </div>
+
+      <div class="fan fan-out">
+        <i class="fan-stem fan-stem--top"></i>
+        <i class="fan-bar"></i>
+        <i class="fan-leg fan-leg--l"></i>
+        <i class="fan-leg fan-leg--c"></i>
+        <i class="fan-leg fan-leg--r"></i>
+        <span class="packet packet--branch packet--l"></span>
+        <span class="packet packet--branch packet--c"></span>
+        <span class="packet packet--branch packet--r"></span>
+      </div>
+
+      <div class="model-row">
+        <div class="model-node">
+          <b>{{ profile.diagram_node_1_title|linebreaksbr }}</b>
+          <span>{{ profile.diagram_node_1_sub }}</span>
+        </div>
+        <div class="model-node">
+          <b>{{ profile.diagram_node_2_title|linebreaksbr }}</b>
+          <span>{{ profile.diagram_node_2_sub }}</span>
+        </div>
+        <div class="model-node">
+          <b>{{ profile.diagram_node_3_title|linebreaksbr }}</b>
+          <span>{{ profile.diagram_node_3_sub }}</span>
+        </div>
+      </div>
+
+      <div class="fan fan-in">
+        <i class="fan-leg fan-leg--l"></i>
+        <i class="fan-leg fan-leg--c"></i>
+        <i class="fan-leg fan-leg--r"></i>
+        <i class="fan-bar"></i>
+        <i class="fan-stem fan-stem--bottom"></i>
+        <span class="packet"></span>
+      </div>
+
+      <div class="node node--final">
+        <div class="node-eyebrow">{{ profile.diagram_final_eyebrow }}</div>
+        <div class="node-title">{{ profile.diagram_final_title }}</div>
+      </div>
+      <div class="diagram-caption">{{ profile.diagram_caption }}</div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 Selected work -->
+<section id="work">
+  <div class="wrap pad-work">
+    <div class="sechead sechead--work" data-reveal="up">
+      <div>
+        <div class="kicker">01 — Selected work</div>
+        <h2>Systems in production</h2>
+      </div>
+      <p>Flagship generative-AI systems taken from prototype to production — starting with a public, analogous solution built with Deepgram and OpenAI tools you can try yourself.</p>
+    </div>
+
+    <!-- Featured Live Demo -->
+    <div class="featured featured--home" data-reveal="left">
+      <div>
+        <span class="featured-badge"><span class="play-tri"></span>{{ profile.demo_badge }}</span>
+        <h3>{{ profile.demo_title }}</h3>
+        <p>{{ profile.demo_description }}</p>
+        
+        <div class="pill-row">
+          {% for tag in profile.demo_tags.split %}
+            <span class="pill pill--lg">{{ tag|cut:',' }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="btn-row">
+          <a class="btn btn--grad" href="{{ profile.demo_url }}" target="_blank">Open the live demo</a>
+          {% if profile.demo_case_study_slug %}
+            <a class="btn btn--ghost" href="{% url 'project_detail' profile.demo_case_study_slug %}">Read the write-up</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="browser" data-reveal="right">
+        <div class="browser-bar">
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+          <span class="browser-url">{{ profile.demo_domain_label }}</span>
+        </div>
+        <div class="browser-body">
+          {% if profile.demo_image %}
+            <img src="{{ profile.demo_image.url }}" alt="{{ profile.demo_title }}">
+          {% else %}
+            <img src="{% static 'img/call-copilot.png' %}" alt="{{ profile.demo_title }}">
+          {% endif %}
+          <button class="demo-launch" type="button" data-demo-open>
+            <span class="demo-launch-pill"><span class="play-tri play-tri--lg"></span>Run it here</span>
+            <span class="demo-launch-note">opens the real app full-screen</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Featured Project Rows -->
+    <div class="rows">
+      {% for proj in featured_projects %}
+        <a class="row-link" href="{% url 'project_detail' proj.slug %}" data-reveal="{% cycle 'left' 'right' 'bottom-left' 'bottom-right' %}">
+          <span class="row-index">{{ proj.index_number|default:forloop.counter }}</span>
+          <span>
+            <span class="row-cat">{{ proj.category_label }}</span>
+            <span class="row-title">{{ proj.title }}</span>
+            <span class="pill-row">
+              {% for tag in proj.tags %}
+                <span class="pill">{{ tag }}</span>
+              {% endfor %}
+            </span>
+          </span>
+          <span class="row-desc">{{ proj.short_description }}</span>
+          <span class="row-metrics">
+            {% for metric in proj.metrics_list %}
+              <span><b>{{ metric.title }}</b><span>{{ metric.sub }}</span></span>
+            {% endfor %}
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+
+    <div class="rows-more" data-reveal="zoom">
+      <a class="btn btn--ghost" href="{% url 'projects' %}">See all projects</a>
+    </div>
+  </div>
+</section>
+
+<!-- 02 What I work on -->
+<section class="banded band-offset">
+  <div class="wrap pad-band">
+    <div class="sechead sechead--plain" data-reveal="up">
+      <div>
+        <div class="kicker">02 — What I work on</div>
+        <h2>{{ profile.what_i_work_on_title }}</h2>
+        <p class="sechead-sub">{{ profile.what_i_work_on_sub }}</p>
+      </div>
+    </div>
+
+    <div class="grid-six">
+      {% for area in focus_areas %}
+        <div data-reveal="{% cycle 'left' 'zoom' 'right' 'bottom-left' 'bottom' 'bottom-right' %}">
+          <span class="icon-tile {{ area.icon_class }}"></span>
+          <h4>{{ area.title }}</h4>
+          <p>{{ area.description }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 03 Skills & tooling -->
+<section id="skills">
+  <div class="wrap pad-skills">
+    <div class="sechead sechead--plain" data-reveal="up">
+      <div>
+        <div class="kicker">03 — Skills &amp; tooling</div>
+        <h2>{{ profile.skills_title }}</h2>
+      </div>
+      <p>{{ profile.skills_sub }}</p>
+    </div>
+
+    <div class="grid-skills">
+      {% for cat in skill_categories %}
+        <div class="skill-card" data-reveal="{% cycle 'bottom-left' 'bottom' 'bottom-right' 'zoom' %}">
+          <div class="skill-head">
+            <span class="icon-tile {{ cat.icon_class|default:'lnr lnr-magic-wand' }}"></span>
+            <h4>{{ cat.title }}</h4>
+          </div>
+          
+          {% if cat.case_links.all %}
+            <div class="micro">Case studies</div>
+            <div class="skill-links">
+              {% for link in cat.case_links.all %}
+                <a class="skill-link" href="{{ link.target_url }}">
+                  <span>{{ link.title }}</span><i>&rarr;</i>
+                </a>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="skill-tools">
+            <div class="micro">Tools &amp; Stack</div>
+            <div class="pill-row">
+              {% for tool in cat.tools %}
+                <a class="chip-tool" href="{% url 'projects' %}" title="Explore projects with {{ tool }}">{{ tool }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 04 About me preview -->
+{% if profile.show_about_on_home %}
+<section class="banded">
+  <div class="wrap about-grid">
+    <div class="photo-col" data-reveal="left">
+      {% if profile.about_photo %}
+        <img src="{{ profile.about_photo.url }}" alt="{{ profile.name }}">
+      {% else %}
+        <img src="{% static 'img/crop.jpg' %}" alt="{{ profile.name }}">
+      {% endif %}
+      
+      <div class="socials">
+        {% if profile.linkedin_url %}
+          <a class="social" href="{{ profile.linkedin_url }}" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a>
+        {% endif %}
+        {% if profile.github_url %}
+          <a class="social" href="{{ profile.github_url }}" target="_blank" title="GitHub"><i class="fa fa-github"></i></a>
+        {% endif %}
+        {% if profile.medium_url %}
+          <a class="social" href="{{ profile.medium_url }}" target="_blank" title="Medium"><i class="fa fa-medium"></i></a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="about-body" data-reveal="right">
+      <div class="kicker">04 — About me</div>
+      <p class="pull-quote">{{ profile.about_pull_quote }}</p>
+      <p>{{ profile.about_p1 }}</p>
+      <p>{{ profile.about_p2 }}</p>
+      
+      <div class="btn-row">
+        <a class="btn btn--grad" href="{% url 'about' %}">More about me</a>
+        <a class="btn btn--ghost" href="{% url 'huck' %}">Meet Huck</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 05 Experience highlights (if marked to show on home) -->
+{% if home_experiences %}
+<section class="home-exp-section" style="border-top: 1px solid var(--line); padding: 70px 0;">
+  <div class="wrap">
+    <div class="sechead sechead--exp" style="margin-bottom: 36px;" data-reveal="up">
+      <div>
+        <div class="kicker">Experience</div>
+        <h2>Career Highlights</h2>
+      </div>
+      <p>Highlighted roles and leadership experience.</p>
+    </div>
+
+    <div class="timeline">
+      {% for exp in home_experiences %}
+        <div class="tl-row" data-reveal="{% cycle 'left' 'right' %}">
+          <div class="tl-year {% if exp.is_current %}tl-year--current{% endif %}">{{ exp.year_range }}</div>
+          <div class="tl-rail {% if forloop.last %}tl-rail--last{% endif %}">
+            <span class="tl-node {% if exp.is_current %}tl-node--current{% elif 'Capital' in exp.organization %}tl-node--co{% endif %}"></span>
+          </div>
+          <div class="tl-body tl-body--exp {% if exp.is_current %}tl-body--current{% endif %}" style="padding-bottom: 24px;">
+            <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;">
+              {% if exp.is_current %}<span class="badge-current">Current</span>{% endif %}
+              <span class="tl-title">{{ exp.title }}</span>
+              <span class="tl-org">
+                {% if exp.organization_url %}
+                  <a class="tl-org-link" href="{{ exp.organization_url }}" target="_blank" rel="noopener noreferrer" title="Visit {{ exp.organization }} website">{{ exp.organization }} <span class="ext-arrow">&#8599;</span></a>
+                {% else %}
+                  {{ exp.organization }}
+                {% endif %}
+              </span>
+            </div>
+            {% if exp.highlight_note %}<div class="tl-note" style="margin-top: 4px;">{{ exp.highlight_note }}</div>{% endif %}
+            {% if exp.description %}<p style="margin-top: 8px; font-size: 14px; color: #94a3b8;">{{ exp.description|truncatewords:25 }}</p>{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    
+    <div style="text-align: center; margin-top: 36px;" data-reveal="zoom">
+      <a class="btn btn--ghost" href="{% url 'about' %}">View complete timeline &rarr;</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

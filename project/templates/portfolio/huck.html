@@ -1,0 +1,76 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}{{ profile.huck_title }} — {{ profile.name }}{% endblock %}
+
+{% block body_class %}page-huck{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="huck-hero grid-bg">
+  <div class="wrap">
+    <div>
+      <div class="kicker" data-reveal="left">Off the Clock</div>
+      <h1 class="hero-h1" data-reveal="right">{{ profile.huck_title }}</h1>
+      <p class="huck-lead" data-reveal="bottom-left">{{ profile.huck_subtitle }}</p>
+      <div class="btn-row" data-reveal="zoom">
+        <a class="btn btn--ghost" href="{% url 'home' %}">Back to the work</a>
+      </div>
+    </div>
+    <div data-reveal="bottom-right" class="huck-photo-wrap">
+      <div class="huck-photo-glow" aria-hidden="true"></div>
+      {% if profile.huck_hero_image %}
+        <img class="huck-hero-photo" src="{{ profile.huck_hero_image.url }}" alt="{{ profile.huck_title }}">
+      {% else %}
+        <img class="huck-hero-photo" src="{% static 'img/huck/huck17.jpg' %}" alt="{{ profile.huck_title }}">
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Gallery -->
+<section class="huck-gallery-section">
+  <div class="wrap pad-gallery">
+    <div class="gallery-head">
+      <h2 data-reveal="right">{{ profile.huck_title }}'s Best Photos</h2>
+      <p data-reveal="bottom-left">{{ photos.count }} photos &middot; tap to enlarge</p>
+    </div>
+    
+    <div class="gallery" data-stagger-grid>
+      {% for photo in photos %}
+        <img data-photo src="{{ photo.image.url }}" alt="{{ photo.alt_text }}" loading="lazy" data-reveal="{% cycle 'bottom-left' 'bottom-right' 'left' 'right' 'zoom' 'top-left' 'top-right' %}">
+      {% empty %}
+        <!-- Fallback to static gallery photos if none in DB -->
+        <img data-photo src="{% static 'img/huck/huck1.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck3.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck20.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck4.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck5.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck6.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck7.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck15.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck16.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck22.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck21.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck19.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck10.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck11.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck12.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck33.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck32.jpg' %}" alt="Huckleberry" loading="lazy">
+        <img data-photo src="{% static 'img/huck/huck31.jpg' %}" alt="Huckleberry" loading="lazy">
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox Overlay -->
+<div class="overlay lightbox-overlay" data-lightbox hidden>
+  <button class="lightbox-close" type="button" data-lightbox-close aria-label="Close">&times;</button>
+  <button class="lightbox-prev" type="button" data-lightbox-step="-1" aria-label="Previous">&lsaquo;</button>
+  <div class="lightbox-stage">
+    <img src="" alt="Enlarged photo">
+  </div>
+  <button class="lightbox-next" type="button" data-lightbox-step="1" aria-label="Next">&rsaquo;</button>
+</div>
+{% endblock %}

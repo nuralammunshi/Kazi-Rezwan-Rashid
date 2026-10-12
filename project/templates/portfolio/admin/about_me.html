@@ -1,0 +1,136 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}About Me &amp; Biography — ABOUT MENU{% endblock %}
+
+{% block content %}
+<div class="card-header">
+  <div>
+    <div style="font-size: 11px; font-weight: 700; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px;">ABOUT MENU &bull; OPTION 01</div>
+    <h1 class="card-title" style="font-size: 22px; margin-top: 2px;">About Me &amp; Biography</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">Update personal bio, headshot photo, social channels, and toggle visibility on the Home page.</p>
+  </div>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <!-- 1. HOME PAGE DISPLAY TOGGLE (PROMINENT OPTION) -->
+  <div class="content-card" style="border: 1px solid rgba(129, 140, 248, 0.4); background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%);">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="lnr lnr-home" style="font-size: 20px; color: #818cf8;"></span>
+          <span style="font-weight: 700; font-size: 16px; color: #fff;">Display on Home Page</span>
+        </div>
+        <p style="color: #94a3b8; font-size: 13px; margin-top: 4px;">
+          Choose whether the "04 — About me" preview section is displayed on the main landing page.
+        </p>
+      </div>
+
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); padding: 8px 16px; border-radius: 8px;">
+        {{ form.show_about_on_home }}
+        <span style="font-weight: 600; font-size: 13.5px; color: #e2e8f0;">Show on Home Page</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- 2. SHORT BIO & HOME PREVIEW -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #818cf8;">
+      <span class="lnr lnr-user"></span> Bio Summary &amp; Portrait Photo
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Portrait Photo (About Photo)</label>
+        {{ form.about_photo }}
+        {% if profile.about_photo %}
+          <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
+            <img src="{{ profile.about_photo.url }}" alt="Profile" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1px solid #818cf8;">
+            <span style="font-size: 12px; color: #94a3b8;">Current photo</span>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Pull Quote / Headline</label>
+        {{ form.about_pull_quote }}
+      </div>
+    </div>
+
+    <div class="form-grid-2" style="margin-top: 14px;">
+      <div class="form-group">
+        <label class="form-label">Summary Paragraph 1 (Home &amp; About)</label>
+        {{ form.about_p1 }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Summary Paragraph 2 (Home &amp; About)</label>
+        {{ form.about_p2 }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. FULL ABOUT PAGE CONTENT -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #34d399;">
+      <span class="lnr lnr-file-empty"></span> Full /about Page Narrative
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">About Page Hero Lead</label>
+      {{ form.about_hero_lead }}
+    </div>
+
+    <div class="form-grid-2" style="margin-top: 14px;">
+      <div class="form-group">
+        <label class="form-label">Full Narrative Paragraph 1</label>
+        {{ form.about_full_p1 }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full Narrative Paragraph 2</label>
+        {{ form.about_full_p2 }}
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SOCIAL CHANNELS & EXTERNAL LINKS -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #38bdf8;">
+      <span class="lnr lnr-link"></span> Contact &amp; Social Links
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Contact Email</label>
+        {{ form.email }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">LinkedIn URL</label>
+        {{ form.linkedin_url }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">GitHub URL</label>
+        {{ form.github_url }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Medium URL</label>
+        {{ form.medium_url }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Extra Link Title (e.g. Substack or Blog)</label>
+        {{ form.external_link_title }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Extra Link URL</label>
+        {{ form.external_link_url }}
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 24px;">
+    <button class="btn-primary" type="submit" style="padding: 12px 28px; font-size: 14px;">
+      <span class="lnr lnr-checkmark-circle"></span> Save About Me Settings
+    </button>
+  </div>
+</form>
+{% endblock %}

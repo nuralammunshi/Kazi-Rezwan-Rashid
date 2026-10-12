@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Portfolio Control Center</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/linearicons.css' %}">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 50% 30%, #1e1b4b 0%, #0f172a 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 20px;
+      padding: 38px 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.15);
+      position: relative;
+    }
+    .login-header { text-align: center; margin-bottom: 28px; }
+    .login-logo {
+      width: 52px; height: 52px; background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+    }
+    .login-logo img { width: 32px; height: 32px; }
+    .login-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .login-sub { font-size: 13.5px; color: #94a3b8; }
+    
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 8px; }
+    .input-wrapper { position: relative; }
+    .input-wrapper span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #64748b; }
+    .form-input {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 12px 14px 12px 40px;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+    }
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #fff;
+      border: none;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(99, 102, 241, 0.45); }
+    .btn-submit:active { transform: translateY(0); }
+
+    .error-box {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 22px;
+      color: #94a3b8;
+      font-size: 13px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: #fff; }
+    .badge-tip {
+      font-size: 12px;
+      color: #94a3b8;
+      text-align: center;
+      margin-top: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 8px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-logo">
+        <img src="{% static 'img/favicon.svg' %}" alt="">
+      </div>
+      <h1 class="login-title">Admin Dashboard</h1>
+      <p class="login-sub">Log in to manage your portfolio, case studies, and content</p>
+    </div>
+
+    {% if error_message %}
+      <div class="error-box">
+        <span class="lnr lnr-cross-circle"></span>
+        <span>{{ error_message }}</span>
+      </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'admin_login' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <div class="input-wrapper">
+          <span class="lnr lnr-user"></span>
+          <input class="form-input" type="text" id="username" name="username" required autofocus placeholder="admin">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="lnr lnr-lock"></span>
+          <input class="form-input" type="password" id="password" name="password" required placeholder="••••••••">
+        </div>
+      </div>
+
+      <button class="btn-submit" type="submit">Sign In to Dashboard &rarr;</button>
+    </form>
+
+    <div class="badge-tip">
+      Default Access: <b>admin</b> / <b>admin12345</b>
+    </div>
+
+    <a class="back-link" href="{% url 'home' %}">&larr; Return to Public Website</a>
+  </div>
+
+</body>
+</html>

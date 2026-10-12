@@ -1,0 +1,153 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}{{ title }} — Portfolio Hub{% endblock %}
+
+{% block content %}
+<div class="card-header">
+  <div>
+    <h1 class="card-title" style="font-size: 22px;">{{ title }}</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">Fill in the project attributes, live links, and technical details.</p>
+  </div>
+  <a class="btn-secondary" href="{% url 'dashboard_projects' %}">&larr; Back to Projects</a>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #818cf8;">
+      <span class="lnr lnr-file-empty"></span> Basic Information
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Project Title *</label>
+        {{ form.title }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL Slug (e.g. call-copilot) *</label>
+        {{ form.slug }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Filter Category *</label>
+        {{ form.category_ref }}
+        <div style="font-size: 11.5px; color: #94a3b8; margin-top: 4px;">
+          Select category for dynamic filter tabs and grouping.
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category Display Label (e.g. Generative AI, Retrieval · RAG)</label>
+        {{ form.category_label }}
+        <div style="font-size: 11.5px; color: #94a3b8; margin-top: 4px;">
+          Optional custom pill label displayed on the project card.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Index Number (e.g. 01, 02)</label>
+        {{ form.index_number }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Display Order / Priority</label>
+        {{ form.order }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #cbd5e1; font-weight: 600;">
+        {{ form.is_featured }}
+        <span>Feature this project on the Home Page Selected Work section</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #34d399;">
+      <span class="lnr lnr-text-align-left"></span> Summary &amp; Card Presentation
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Short Summary (Displayed on Portfolio Cards) *</label>
+      {{ form.short_description }}
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Tech Stack Tags (Comma separated: GPT-4, Kafka, Python)</label>
+        {{ form.tech_stack }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Metrics Badges (One per line: Key: Value)</label>
+        {{ form.metrics_text }}
+        <div class="form-help">Example:<br>Real-time: Mid-call notes<br>Agentic: Draft + review</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #c084fc;">
+      <span class="lnr lnr-laptop-phone"></span> Live Links &amp; Hero Media
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Live Demo External URL</label>
+        {{ form.live_demo_url }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">GitHub Repository URL</label>
+        {{ form.github_url }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Hero Cover Image / Screenshot</label>
+        {{ form.hero_image }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Hero Image Caption</label>
+        {{ form.hero_caption }}
+      </div>
+    </div>
+  </div>
+
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #f59e0b;">
+      <span class="lnr lnr-book"></span> Case Study Detail Page Write-Up
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Kicker Eyebrow</label>
+      {{ form.kicker }}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Opening Lede Paragraph</label>
+      {{ form.lede }}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Architecture Diagram (ASCII / Text)</label>
+      {{ form.architecture_snippet }}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Full Case Study Content (HTML / Markdown)</label>
+      {{ form.content }}
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 14px; margin-top: 10px; margin-bottom: 40px;">
+    <button class="btn-primary" type="submit" style="padding: 12px 28px; font-size: 15px;">
+      <span class="lnr lnr-checkmark-circle"></span> Save Project
+    </button>
+    <a class="btn-secondary" href="{% url 'dashboard_projects' %}" style="padding: 12px 24px;">Cancel</a>
+  </div>
+</form>
+{% endblock %}

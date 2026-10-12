@@ -1,0 +1,148 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}Projects — {{ profile.name }}{% endblock %}
+
+{% block body_class %}page-projects{% endblock %}
+
+{% block content %}
+<!-- Page head -->
+<section class="grid-bg">
+  <div class="wrap page-head">
+    <div class="kicker" data-reveal="left">Projects</div>
+    <h1 class="hero-h1" data-reveal="right">{{ projects.count }} {{ profile.projects_page_title }}</h1>
+    <p data-reveal="bottom-left">{{ profile.projects_page_lead }}</p>
+    
+    <!-- Filter Buttons -->
+    <div class="filters" data-reveal="bottom-right">
+      <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">All work<span>{{ count_all }}</span></button>
+      {% for cat in categories %}
+        <button class="filter" type="button" data-filter="{{ cat.slug }}" aria-pressed="false">{{ cat.name }}<span>{{ cat.projects.count }}</span></button>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="projects-body">
+  <div class="wrap pad-projects">
+
+    <!-- Featured Live Demo -->
+    <div class="featured" data-group="genai" data-reveal="bottom-left">
+      <div>
+        <span class="featured-badge" data-reveal="left"><span class="play-tri"></span>{{ profile.demo_badge }}</span>
+        <h3 data-reveal="right">{{ profile.demo_title }}</h3>
+        <p data-reveal="bottom-left">{{ profile.demo_description }}</p>
+        
+        <div class="pill-row" data-reveal="bottom-right">
+          {% for tag in profile.demo_tags.split %}
+            <span class="pill pill--lg">{{ tag|cut:',' }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="btn-row" data-reveal="zoom">
+          <a class="btn btn--grad" href="{{ profile.demo_url }}" target="_blank">Open the live demo</a>
+          {% if profile.demo_case_study_slug %}
+            <a class="btn btn--ghost" href="{% url 'project_detail' profile.demo_case_study_slug %}">Read the write-up</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="browser" data-reveal="bottom-right">
+        <div class="browser-bar">
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+          <span class="browser-url">{{ profile.demo_domain_label }}</span>
+        </div>
+        <div class="browser-body">
+          {% if profile.demo_image %}
+            <img src="{{ profile.demo_image.url }}" alt="{{ profile.demo_title }}">
+          {% else %}
+            <img src="{% static 'img/call-copilot.png' %}" alt="{{ profile.demo_title }}">
+          {% endif %}
+          <button class="demo-launch" type="button" data-demo-open>
+            <span class="demo-launch-pill"><span class="play-tri play-tri--lg"></span>Run it here</span>
+            <span class="demo-launch-note">opens the real app full-screen</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Category Project Groups -->
+    {% for cat in categories %}
+      {% if cat.projects.all %}
+        <div class="project-group" data-group="{{ cat.slug }}">
+          <div class="sechead sechead--group" data-reveal="up">
+            <h2>{{ cat.name }}</h2>
+            {% if cat.description %}<p>{{ cat.description }}</p>{% endif %}
+          </div>
+
+          {% for proj in cat.projects.all %}
+            <a class="row-link" href="{% url 'project_detail' proj.slug %}" data-reveal="{% cycle 'left' 'right' 'bottom-left' 'bottom-right' 'zoom' %}" data-cat="{{ cat.slug }}">
+              <span class="row-index">{{ proj.index_number|default:forloop.counter }}</span>
+              <span>
+                <span class="row-cat">{{ proj.category_label|default:cat.name }}</span>
+                <span class="row-title">{{ proj.title }}</span>
+                <span class="pill-row">
+                  {% for tag in proj.tags %}
+                    <span class="pill">{{ tag }}</span>
+                  {% endfor %}
+                </span>
+              </span>
+              <span class="row-desc">{{ proj.short_description }}</span>
+              <span class="row-metrics">
+                {% for metric in proj.metrics_list %}
+                  <span><b>{{ metric.title }}</b><span>{{ metric.sub }}</span></span>
+                {% endfor %}
+              </span>
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <!-- Uncategorized Projects Group (if any) -->
+    {% for proj in projects %}
+      {% if not proj.category_ref %}
+        {% if forloop.first %}
+          <div class="project-group" data-group="other">
+            <div class="sechead sechead--group" data-reveal="up">
+              <h2>Other Projects</h2>
+              <p>Additional works and experiments.</p>
+            </div>
+        {% endif %}
+            <a class="row-link" href="{% url 'project_detail' proj.slug %}" data-reveal="{% cycle 'left' 'right' %}" data-cat="other">
+              <span class="row-index">{{ proj.index_number|default:forloop.counter }}</span>
+              <span>
+                <span class="row-cat">{{ proj.category_label|default:"General" }}</span>
+                <span class="row-title">{{ proj.title }}</span>
+                <span class="pill-row">
+                  {% for tag in proj.tags %}
+                    <span class="pill">{{ tag }}</span>
+                  {% endfor %}
+                </span>
+              </span>
+              <span class="row-desc">{{ proj.short_description }}</span>
+              <span class="row-metrics">
+                {% for metric in proj.metrics_list %}
+                  <span><b>{{ metric.title }}</b><span>{{ metric.sub }}</span></span>
+                {% endfor %}
+              </span>
+            </a>
+        {% if forloop.last %}
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+  </div>
+</section>
+
+<!-- Close CTA -->
+<section>
+  <div class="wrap close-cta" data-reveal="up">
+    <p>Want the full detail, with dates and stack?</p>
+    <a class="btn btn--grad btn--lg" href="{% url 'resume_pdf_direct' %}" target="_blank">View my r&eacute;sum&eacute;</a>
+  </div>
+</section>
+{% endblock %}

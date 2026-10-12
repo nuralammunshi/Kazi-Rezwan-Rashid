@@ -1,0 +1,186 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}About — {{ profile.name }}{% endblock %}
+
+{% block body_class %}page-about{% endblock %}
+
+{% block content %}
+<!-- Intro -->
+<section class="grid-bg">
+  <div class="wrap pad-intro">
+    <div class="intro-head">
+      <div class="kicker" data-reveal="left">About me</div>
+      <h1 class="hero-h1" data-reveal="right">Hi, I'm {{ profile.name }}</h1>
+      <p class="intro-lead" data-reveal="bottom-left">{{ profile.about_hero_lead }}</p>
+    </div>
+
+    <div class="intro-grid">
+      <div class="photo-col" data-reveal="left">
+        {% if profile.about_photo %}
+          <img src="{{ profile.about_photo.url }}" alt="{{ profile.name }}">
+        {% elif profile.avatar %}
+          <img src="{{ profile.avatar.url }}" alt="{{ profile.name }}">
+        {% else %}
+          <img src="{% static 'img/crop.jpg' %}" alt="{{ profile.name }}">
+        {% endif %}
+        
+        <div class="intro-btns" data-reveal="zoom">
+          <a class="btn btn--grad" href="{% url 'home' %}#work">Selected work</a>
+          <a class="btn btn--ghost" href="{% url 'resume_pdf_direct' %}" target="_blank">R&eacute;sum&eacute;</a>
+        </div>
+      </div>
+
+      <div class="intro-body">
+        <p data-reveal="bottom-left">{{ profile.about_full_p1 }}</p>
+        <p data-reveal="bottom-right">{{ profile.about_full_p2 }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Experience timeline -->
+<section class="about-exp-section">
+  <div class="wrap pad-exp">
+    <div class="sechead sechead--exp">
+      <div>
+        <div class="kicker" data-reveal="left">Experience</div>
+        <h2 data-reveal="right">Career Timeline &amp; Journey</h2>
+      </div>
+      <p data-reveal="bottom-left">Expand a role to see what I built there.</p>
+    </div>
+
+    <div class="timeline" data-stagger-grid>
+      {% for exp in experiences %}
+        <div class="tl-row" data-reveal="{% cycle 'left' 'right' 'bottom-left' 'bottom-right' %}" {% if exp.has_details %}data-exp{% endif %} {% if exp.is_open_by_default %}data-exp-open{% endif %}>
+          <div class="tl-year {% if exp.is_current %}tl-year--current{% endif %}">{{ exp.year_range }}</div>
+          
+          <div class="tl-rail {% if forloop.last %}tl-rail--last{% endif %}">
+            <span class="tl-node {% if exp.is_current %}tl-node--current{% elif 'Capital' in exp.organization %}tl-node--co{% endif %}"></span>
+          </div>
+
+          {% if exp.has_details %}
+            <div class="tl-body tl-body--exp {% if exp.is_current %}tl-body--current{% endif %}">
+              {% if exp.is_current %}<div class="tl-current-card">{% endif %}
+              
+              <div class="exp-btn" role="button" tabindex="0" data-exp-btn aria-expanded="{% if exp.is_open_by_default %}true{% else %}false{% endif %}">
+                <span>
+                  {% if exp.is_current %}<span class="badge-current">Current</span>{% endif %}
+                  <span class="tl-title">{{ exp.title }}</span>
+                  <span class="tl-org">
+                    {% if exp.organization_url %}
+                      <a class="tl-org-link" href="{{ exp.organization_url }}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" title="Visit {{ exp.organization }} website">{{ exp.organization }} <span class="ext-arrow">&#8599;</span></a>
+                    {% else %}
+                      {{ exp.organization }}
+                    {% endif %}
+                  </span>
+                  {% if exp.highlight_note %}<span class="tl-note">{{ exp.highlight_note }}</span>{% endif %}
+                </span>
+                <span class="exp-icon"><span class="exp-glyph">+</span></span>
+              </div>
+
+              <div class="exp-panel" data-exp-panel>
+                <p>{{ exp.description|linebreaksbr }}</p>
+                {% if exp.tech_stack %}
+                  <div class="exp-stack">{{ exp.tech_stack }}</div>
+                {% endif %}
+
+                {% if exp.links_list %}
+                  <div class="pill-row">
+                    {% for link in exp.links_list %}
+                      {% if link.url %}
+                        <a class="pill pill--lg" href="{{ link.url }}" target="_blank" rel="noopener">{{ link.label }} &rarr;</a>
+                      {% elif link.slug %}
+                        <a class="pill pill--lg" href="{% url 'project_detail' link.slug %}">{{ link.label }} &rarr;</a>
+                      {% else %}
+                        <span class="pill pill--lg">{{ link.label }}</span>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              {% if exp.is_current %}</div>{% endif %}
+            </div>
+          {% else %}
+            <div class="tl-body">
+              <span class="tl-title">{{ exp.title }}</span>
+              <span class="tl-org">
+                {% if exp.organization_url %}
+                  <a class="tl-org-link" href="{{ exp.organization_url }}" target="_blank" rel="noopener noreferrer" title="Visit {{ exp.organization }} website">{{ exp.organization }} <span class="ext-arrow">&#8599;</span></a>
+                {% else %}
+                  {{ exp.organization }}
+                {% endif %}
+              </span>
+              {% if exp.highlight_note %}<span class="tl-note">{{ exp.highlight_note }}</span>{% endif %}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Academic & Professional References Section -->
+{% if references %}
+<section class="banded" id="references">
+  <div class="wrap pad-ref">
+    <div class="sechead sechead--plain" data-reveal="up">
+      <div>
+        <div class="kicker">References</div>
+        <h2>Academic &amp; Professional References</h2>
+      </div>
+      <p>Senior faculty members at Jahangirnagar University who have supervised and evaluated my research and academic journey.</p>
+    </div>
+
+    <div class="grid-refs" data-reveal="up">
+      {% for ref in references %}
+        <div class="ref-card">
+          <div>
+            <div class="ref-header">
+              <div class="ref-avatar">
+                <span>{{ ref.initials }}</span>
+              </div>
+              <div class="ref-meta">
+                <h3 class="ref-name">{{ ref.name }}</h3>
+                {% if ref.qualifications %}
+                  <div class="ref-qual">{{ ref.qualifications }}</div>
+                {% endif %}
+                <div class="ref-desig">{{ ref.designation }}</div>
+              </div>
+            </div>
+
+            <div class="ref-dept-inst">
+              <div class="ref-dept">{{ ref.department }}</div>
+              <div class="ref-inst">{{ ref.institution }}</div>
+              {% if ref.address %}
+                <div class="ref-address">{{ ref.address }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="ref-contact">
+            {% if ref.phone %}
+              <div class="ref-contact-row">
+                <span class="ref-contact-label"><i class="fa fa-phone"></i> Cell Phone:</span>
+                <a class="ref-link" href="tel:{{ ref.phone }}">{{ ref.phone }}</a>
+              </div>
+            {% endif %}
+
+            <div class="ref-contact-row">
+              <span class="ref-contact-label"><i class="fa fa-envelope-o"></i> Email:</span>
+              <div class="ref-emails">
+                {% for email in ref.email_list %}
+                  <a class="ref-link pill" href="mailto:{{ email }}">{{ email }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

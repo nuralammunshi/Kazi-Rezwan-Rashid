@@ -1,0 +1,94 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}What I work on — HOME MENU{% endblock %}
+
+{% block content %}
+<div class="card-header">
+  <div>
+    <div style="font-size: 11px; font-weight: 700; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px;">HOME MENU &bull; SECTION 02</div>
+    <h1 class="card-title" style="font-size: 22px; margin-top: 2px;">What I work on (Services &amp; Specializations)</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">Manage the section headline, subtitle, and the specialization cards.</p>
+  </div>
+</div>
+
+<!-- 1. SECTION HEADERS FORM -->
+<div class="content-card">
+  <div class="card-title" style="margin-bottom: 16px; color: #818cf8;">
+    <span class="lnr lnr-text-format"></span> Section Headline &amp; Subtitle
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="save_header" value="1">
+    
+    {% if header_form.errors %}
+      <div class="dash-alert" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171; margin-bottom: 16px;">
+        <span class="lnr lnr-cross-circle"></span>
+        <span>Please correct the errors in the header form.</span>
+      </div>
+    {% endif %}
+      <div class="form-group">
+        <label class="form-label">Section Headline (H2)</label>
+        {{ header_form.what_i_work_on_title }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Section Subtitle</label>
+        {{ header_form.what_i_work_on_sub }}
+      </div>
+    </div>
+
+    <button class="btn-primary" type="submit" style="padding: 8px 18px; font-size: 13px;">
+      <span class="lnr lnr-checkmark-circle"></span> Save Headers
+    </button>
+  </form>
+</div>
+
+<!-- 2. FOCUS AREAS CARDS CRUD -->
+<div class="content-card" style="padding: 0; overflow: hidden;">
+  <div class="card-header" style="padding: 20px 24px; margin-bottom: 0;">
+    <div>
+      <div class="card-title" style="font-size: 16.5px; color: #34d399;">
+        <span class="lnr lnr-magic-wand"></span> Specialization Cards
+      </div>
+      <p style="color: var(--dash-muted); font-size: 12.5px; margin-top: 2px;">Create, update, or delete the 6 cards featured in this section.</p>
+    </div>
+    <a class="btn-primary" href="{% url 'dashboard_focus_area_add' %}" style="font-size: 12.5px; padding: 6px 14px;">
+      <span class="lnr lnr-plus-circle"></span> + Add Card
+    </a>
+  </div>
+
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th style="width: 70px;">Order</th>
+        <th style="width: 60px;">Icon</th>
+        <th style="width: 220px;">Card Title</th>
+        <th>Description</th>
+        <th style="text-align: right; padding-right: 20px; width: 140px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td><b style="color: #818cf8;">#{{ item.order }}</b></td>
+          <td><span class="{{ item.icon_class }}" style="font-size: 20px; color: #818cf8;"></span></td>
+          <td><b style="color: #fff; font-size: 14.5px;">{{ item.title }}</b></td>
+          <td style="color: #cbd5e1; font-size: 13px;">{{ item.description }}</td>
+          <td style="text-align: right; padding-right: 20px;">
+            <div class="table-actions" style="justify-content: flex-end;">
+              <a class="btn-secondary" style="padding: 4px 10px; font-size: 12px;" href="{% url 'dashboard_focus_area_edit' item.pk %}">Edit</a>
+              <a class="btn-danger" href="{% url 'dashboard_focus_area_delete' item.pk %}">Delete</a>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 30px; color: #94a3b8;">
+            No cards found. Click "+ Add Card" above to create one.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

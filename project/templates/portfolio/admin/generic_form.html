@@ -1,0 +1,54 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}{{ title }} — Portfolio Hub{% endblock %}
+
+{% block content %}
+<div class="card-header">
+  <div>
+    <h1 class="card-title" style="font-size: 22px;">{{ title }}</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">Update details and click save to apply changes.</p>
+  </div>
+</div>
+
+<div class="content-card" style="max-width: 720px;">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div class="form-group">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }} {% if field.field.required %}*{% endif %}
+        </label>
+        {{ field }}
+        {% if field.help_text %}
+          <div class="form-help">{{ field.help_text }}</div>
+        {% endif %}
+        {% if field.errors %}
+          <div style="color: #f87171; font-size: 12px; margin-top: 5px;">{{ field.errors.0 }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div style="display: flex; gap: 12px; margin-top: 24px;">
+      <button class="btn-primary" type="submit" style="padding: 10px 22px;">
+        <span class="lnr lnr-checkmark-circle"></span> Save
+      </button>
+      {% if back_url %}
+        <a class="btn-secondary" href="{% url back_url %}">Cancel</a>
+      {% elif active_section == 'project_menu' %}
+        <a class="btn-secondary" href="{% url 'dashboard_project_menu' %}">Cancel</a>
+      {% elif active_section == 'stats' %}
+        <a class="btn-secondary" href="{% url 'dashboard_stats' %}">Cancel</a>
+      {% elif active_section == 'focus_areas' %}
+        <a class="btn-secondary" href="{% url 'dashboard_focus_areas' %}">Cancel</a>
+      {% elif active_section == 'experience' %}
+        <a class="btn-secondary" href="{% url 'dashboard_experience' %}">Cancel</a>
+      {% elif active_section == 'gallery' %}
+        <a class="btn-secondary" href="{% url 'dashboard_gallery' %}">Cancel</a>
+      {% else %}
+        <a class="btn-secondary" href="{% url 'dashboard_home' %}">Cancel</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

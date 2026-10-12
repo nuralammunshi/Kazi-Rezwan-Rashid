@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Favicon-->
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="icon" href="{% static 'img/favicon-32.png' %}" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="{% static 'img/favicon-180.png' %}">
+  <link rel="shortcut icon" href="{% static 'img/favicon-32.png' %}">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="author" content="{{ profile.name }}">
+  <meta name="description" content="{% block meta_description %}{{ profile.name }} — {{ profile.status_chip }}. Production AI systems and applied ML.{% endblock %}">
+  <title>{% block title %}{{ profile.name }} — {{ profile.brand_kicker }}{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="{% static 'css/linearicons.css' %}">
+  <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/chrome.css' %}">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}?v=20260923_original_restored_clean">
+
+  <style>
+    /* Contact Modal & UI Polish */
+    .contact-modal-overlay {
+      position: fixed; inset: 0; background: rgba(11, 17, 32, 0.75);
+      backdrop-filter: blur(8px); z-index: 10000; display: flex;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .contact-modal-overlay[hidden] { display: none !important; }
+    .contact-card {
+      background: #ffffff; width: 100%; max-width: 520px;
+      border-radius: 18px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(99, 102, 241, 0.2); position: relative;
+      animation: modal-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modal-enter {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-close-btn {
+      position: absolute; top: 20px; right: 20px; background: #f3f4f6;
+      border: none; width: 32px; height: 32px; border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: #4b5563; transition: all 0.2s;
+    }
+    .modal-close-btn:hover { background: #e5e7eb; color: #111827; }
+    .contact-field { margin-bottom: 16px; }
+    .contact-field label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .contact-field input, .contact-field textarea {
+      width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px 14px;
+      font-family: inherit; font-size: 14px; transition: border-color 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+    }
+    .contact-field input:focus, .contact-field textarea:focus {
+      outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+    .admin-pill-link {
+      display: inline-flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.1);
+      color: #6366f1; font-weight: 600; font-size: 12px; padding: 4px 10px; border-radius: 9999px;
+      text-decoration: none; margin-left: 10px; border: 1px solid rgba(99,102,241,0.25);
+    }
+    .admin-pill-link:hover { background: #6366f1; color: #fff; }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}page-home{% endblock %}">
+
+  <!-- Global Scroll Progress Indicator -->
+  <div class="scroll-progress-bar" id="scrollProgressBar" aria-hidden="true"></div>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="{% url 'home' %}">
+        <img src="{% static 'img/favicon.svg' %}" alt="">
+        <span class="brand-lockup">
+          <span class="brand-name">{{ profile.name }}</span>
+          <span class="brand-kicker">{{ profile.brand_kicker }}</span>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-label="Menu" aria-expanded="false">
+        <span class="lnr lnr-menu"></span>
+      </button>
+
+      <nav class="nav" data-nav-list>
+        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}is-current{% endif %}" href="{% url 'home' %}">Home</a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}is-current{% endif %}" href="{% url 'about' %}">About</a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'projects' or request.resolver_match.url_name == 'project_detail' %}is-current{% endif %}" href="{% url 'projects' %}">Projects</a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'huck' %}is-current{% endif %}" href="{% url 'huck' %}">Huck</a>
+        
+        {% if profile.external_link_url %}
+        <span class="nav-div"></span>
+        <a class="nav-link nav-ext" href="{{ profile.external_link_url }}" target="_blank">{{ profile.external_link_title }}<span class="ext-arrow">&#8599;</span></a>
+        {% endif %}
+
+        <a class="nav-resume" href="{% url 'resume_pdf_direct' %}" target="_blank" id="navResumeBtn">R&eacute;sum&eacute;</a>
+
+        <button type="button" class="btn btn--ghost btn--sm" data-contact-open style="margin-left: 8px; padding: 6px 14px; font-size: 13px;">Contact</button>
+
+        {% if user.is_authenticated and user.is_staff %}
+        <a class="btn btn--grad btn--sm" href="{% url 'dashboard_home' %}" style="margin-left: 8px; padding: 6px 14px; font-size: 13px; text-decoration: none;">
+          <span class="lnr lnr-screen" style="margin-right: 4px;"></span>Dashboard
+        </a>
+        {% endif %}
+      </nav>
+    </div>
+    <div class="header-strip"></div>
+  </header>
+
+  <!-- Flash Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="toast-banner">
+        <span class="lnr lnr-checkmark-circle" style="color:#10b981; font-size:18px;"></span>
+        <span>{{ message }}</span>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Main Content Block -->
+  <main class="page-content-entrance">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div class="footer-col" data-reveal="bottom-left">
+        <div class="footer-brand">
+          <img src="{% static 'img/favicon.svg' %}" alt="">
+          <span>{{ profile.name }}</span>
+        </div>
+        <p>{{ profile.status_chip }}. Open to conversations about generative AI and applied ML.</p>
+        <a class="footer-email" href="mailto:{{ profile.email }}">{{ profile.email }}</a>
+        <div style="margin-top: 16px;">
+          <a href="{% url 'dashboard_home' %}" class="admin-pill-link" style="margin-left: 0;">
+            <span class="lnr lnr-cog"></span>Admin Portal
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col" data-reveal="zoom">
+        <div class="micro">Pages</div>
+        <div class="footer-links">
+          <a class="{% if request.resolver_match.url_name == 'home' %}is-current{% endif %}" href="{% url 'home' %}">Home</a>
+          <a class="{% if request.resolver_match.url_name == 'about' %}is-current{% endif %}" href="{% url 'about' %}">About</a>
+          <a class="{% if request.resolver_match.url_name == 'projects' or request.resolver_match.url_name == 'project_detail' %}is-current{% endif %}" href="{% url 'projects' %}">Projects</a>
+          <a class="{% if request.resolver_match.url_name == 'huck' %}is-current{% endif %}" href="{% url 'huck' %}">Huck</a>
+          <a href="{% url 'resume_pdf_direct' %}" target="_blank" rel="noopener noreferrer">R&eacute;sum&eacute; <span class="ext-arrow">&#8599;</span></a>
+        </div>
+      </div>
+
+      <div class="footer-col" data-reveal="bottom-right">
+        <div class="micro">Elsewhere</div>
+        <div class="footer-links">
+          {% if profile.linkedin_url %}<a href="{{ profile.linkedin_url }}" target="_blank">LinkedIn <span class="ext-arrow">&#8599;</span></a>{% endif %}
+          {% if profile.github_url %}<a href="{{ profile.github_url }}" target="_blank">GitHub <span class="ext-arrow">&#8599;</span></a>{% endif %}
+          {% if profile.medium_url %}<a href="{{ profile.medium_url }}" target="_blank">Medium <span class="ext-arrow">&#8599;</span></a>{% endif %}
+          {% if profile.external_link_url %}<a href="{{ profile.external_link_url }}" target="_blank">{{ profile.external_link_title }} <span class="ext-arrow">&#8599;</span></a>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="footer-bottom" data-reveal="up">
+        <span>&copy; 2026 {{ profile.name|default:"Kazi Rezwan Rashid" }} &middot; </span>
+        <span>Built with Python &amp; Django &middot; Dynamic &amp; Fully Customizable</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Full-Screen Live Demo Modal -->
+  <div class="overlay" data-demo hidden>
+    <div class="overlay-bar">
+      <div class="overlay-id">
+        <img src="{% static 'img/favicon.svg' %}" alt="">
+        <span class="overlay-title">{{ profile.demo_title }}</span>
+        <span class="overlay-url">{{ profile.demo_domain_label }}</span>
+      </div>
+      <div class="overlay-actions">
+        <a class="overlay-out" href="{{ profile.demo_url }}" target="_blank">Open in a new tab &#8599;</a>
+        <button class="overlay-close" type="button" data-demo-close>Close &#10005;</button>
+      </div>
+    </div>
+    <iframe data-src="{{ profile.demo_url }}" title="{{ profile.demo_title }}" allow="microphone"></iframe>
+  </div>
+
+  <!-- Contact Modal -->
+  <div class="contact-modal-overlay" id="contactModal" hidden>
+    <div class="contact-card">
+      <button class="modal-close-btn" type="button" id="closeContactModal">&times;</button>
+      <div class="kicker" style="margin-bottom: 6px;">Get In Touch</div>
+      <h3 style="font-family: 'Space Grotesk', sans-serif; margin-bottom: 8px;">Send a Message</h3>
+      <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">Feel free to reach out about Generative AI, production ML, or potential collaborations.</p>
+
+      <form action="{% url 'contact_submit' %}" method="post">
+        {% csrf_token %}
+        <div class="contact-field">
+          <label for="c_name">Your Name *</label>
+          <input type="text" id="c_name" name="name" required placeholder="John Doe">
+        </div>
+        <div class="contact-field">
+          <label for="c_email">Your Email *</label>
+          <input type="email" id="c_email" name="email" required placeholder="john@example.com">
+        </div>
+        <div class="contact-field">
+          <label for="c_subject">Subject</label>
+          <input type="text" id="c_subject" name="subject" placeholder="Project Inquiry / Hello">
+        </div>
+        <div class="contact-field">
+          <label for="c_message">Message *</label>
+          <textarea id="c_message" name="message" rows="4" required placeholder="Write your message here..."></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;">
+          <button type="button" class="btn btn--ghost" id="cancelContactModal">Cancel</button>
+          <button type="submit" class="btn btn--grad">Send Message</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Floating Back to Top Button -->
+  <button class="back-to-top-btn" id="backToTopBtn" type="button" aria-label="Back to top" title="Scroll to top">
+    <span class="lnr lnr-chevron-up"></span>
+  </button>
+
+  <!-- Scripts -->
+  <script src="{% static 'js/site.js' %}"></script>
+  <script>
+    // Contact Modal Toggle
+    (function() {
+      var modal = document.getElementById('contactModal');
+      var openBtns = document.querySelectorAll('[data-contact-open]');
+      var closeBtn = document.getElementById('closeContactModal');
+      var cancelBtn = document.getElementById('cancelContactModal');
+
+      function openModal() {
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+      }
+      function closeModal() {
+        modal.hidden = true;
+        document.body.style.overflow = '';
+      }
+
+      openBtns.forEach(function(b) { b.addEventListener('click', openModal); });
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) closeModal();
+        });
+      }
+    })();
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,1357 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ profile.name }} — Curriculum Vitae | Machine Learning Engineer</title>
+  <meta name="description" content="Curriculum Vitae of {{ profile.name }}, Machine Learning Engineer & Researcher. Specializing in Deep Learning, Computer Vision, and NLP.">
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
+  
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-card: #0d121f;
+      --bg-toolbar: rgba(13, 18, 31, 0.92);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-highlight: rgba(129, 140, 248, 0.3);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --paper-bg: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Background Ambient Glow & Cybernetic Matrix */
+    .bg-glow {
+      position: fixed;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1100px;
+      height: 520px;
+      background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.16) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 80%);
+      pointer-events: none;
+      z-index: 0;
+      animation: cvGlowPulse 8s ease-in-out infinite alternate;
+    }
+    .bg-glow-secondary {
+      position: fixed;
+      bottom: -120px;
+      right: -60px;
+      width: 580px;
+      height: 580px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(99, 102, 241, 0.04) 50%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(60px);
+      animation: cvOrbFloat 18s ease-in-out infinite alternate;
+    }
+    .bg-dot-matrix {
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      animation: cvDotMatrixShift 40s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes cvGlowPulse {
+      0% { transform: translateX(-50%) scale(0.95); opacity: 0.7; }
+      100% { transform: translateX(-50%) scale(1.08); opacity: 1; }
+    }
+    @keyframes cvOrbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-45px, -30px) scale(1.15); }
+      100% { transform: translate(30px, -20px) scale(0.95); }
+    }
+    @keyframes cvDotMatrixShift {
+      0% { background-position: 0 0; }
+      100% { background-position: 64px 64px; }
+    }
+
+    /* Header Toolbar */
+    .cv-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-toolbar);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateX(-2px);
+    }
+
+    .cv-info-badge {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cv-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .cv-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* Center Controls */
+    .toolbar-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .tool-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+
+    .tool-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    .zoom-level-text {
+      font-size: 12px;
+      font-family: 'Fira Code', monospace;
+      color: #c7d2fe;
+      min-width: 44px;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* Right Actions */
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-download {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35);
+    }
+
+    .btn-download:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-ghost-action:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Academic References Modal */
+    .ref-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 18, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: modalFadeIn 0.22s ease-out;
+    }
+    .ref-modal-window {
+      background: #0d121f;
+      border: 1px solid rgba(129, 140, 248, 0.28);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 740px;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(99, 102, 241, 0.2);
+      display: flex;
+      flex-direction: column;
+    }
+    .ref-modal-header {
+      padding: 20px 26px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: rgba(13, 18, 31, 0.98);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .ref-modal-close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #94a3b8;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.2s ease;
+    }
+    .ref-modal-close-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+    .ref-modal-body {
+      padding: 22px 26px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .modal-ref-card {
+      background: linear-gradient(155deg, rgba(30, 41, 67, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(129, 140, 248, 0.2);
+      border-radius: 16px;
+      padding: 20px 22px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .modal-ref-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .modal-ref-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 35% 35%, rgba(99, 102, 241, 0.4), rgba(79, 70, 229, 0.2));
+      border: 1.5px solid rgba(165, 180, 252, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+    }
+    .modal-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+    .modal-ref-verified {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 2px 7px;
+      border-radius: 99px;
+    }
+    .modal-ref-rel {
+      font-size: 10.5px;
+      font-weight: 600;
+      background: rgba(168, 85, 247, 0.15);
+      color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      padding: 2px 7px;
+      border-radius: 99px;
+    }
+    .modal-ref-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 4px 0 2px;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .modal-ref-quals {
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+      color: #c7d2fe;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 4px;
+      padding: 2px 6px;
+      display: inline-block;
+      margin: 3px 0 6px;
+    }
+    .modal-ref-rank {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(99, 102, 241, 0.2);
+      color: #c7d2fe;
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      margin-top: 3px;
+    }
+    .modal-ref-rank--assoc {
+      background: rgba(59, 130, 246, 0.2);
+      color: #bae6fd;
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+    .modal-ref-details {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 14px 0 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+    .modal-ref-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-ref-line span:first-child {
+      color: #818cf8;
+      font-size: 14px;
+    }
+    .modal-portal-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: #818cf8;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .modal-portal-link:hover {
+      text-decoration: underline;
+    }
+    .modal-contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .modal-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .modal-chip--tel {
+      background: rgba(16, 185, 129, 0.12);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+    .modal-chip--tel:hover {
+      background: rgba(16, 185, 129, 0.25);
+      color: #fff;
+    }
+    .modal-chip--mail {
+      background: rgba(99, 102, 241, 0.12);
+      color: #c7d2fe;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+    .modal-chip--mail:hover {
+      background: rgba(99, 102, 241, 0.25);
+      color: #fff;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Main Viewer Container */
+    .cv-viewer-container {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 64px;
+      gap: 32px;
+    }
+
+    .cv-page-wrapper {
+      position: relative;
+      transition: transform 0.2s ease-out;
+      transform-origin: top center;
+      animation: cvPageEntrance 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .cv-page-wrapper:nth-of-type(1) { animation-delay: 0.08s; }
+    .cv-page-wrapper:nth-of-type(2) { animation-delay: 0.22s; }
+    .cv-page-wrapper:nth-of-type(3) { animation-delay: 0.36s; }
+
+    @keyframes cvPageEntrance {
+      0% { opacity: 0; transform: translateY(36px) scale(0.98); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .cv-page-card {
+      background: var(--paper-bg);
+      border-radius: 4px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      max-width: 850px;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+      transition: box-shadow 0.35s ease, transform 0.35s ease;
+    }
+    .cv-page-card:hover {
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 0 1.5px rgba(99, 102, 241, 0.35);
+    }
+
+    .cv-page-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .page-indicator-pill {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e1b4b;
+      border: 1px solid #4338ca;
+      color: #c7d2fe;
+      font-size: 11px;
+      font-family: 'Fira Code', monospace;
+      padding: 2px 10px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      z-index: 2;
+    }
+
+    /* Floating Quick Nav for multi-page */
+    .floating-page-nav {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      border-radius: 30px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      z-index: 50;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .floating-page-nav a {
+      color: #818cf8;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .floating-page-nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Sheet Styling for Page 3 References Document */
+    .cv-page-card--sheet {
+      background: #ffffff !important;
+      color: #1e293b;
+      padding: 48px 52px 56px;
+      box-sizing: border-box;
+      min-height: 1080px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .sheet-header {
+      margin-bottom: 24px;
+    }
+    .sheet-brand {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .sheet-kicker {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: #4f46e5;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      font-family: 'Fira Code', monospace;
+    }
+    .sheet-title {
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      font-size: 25px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin: 0 0 5px;
+      line-height: 1.2;
+    }
+    .sheet-subtitle {
+      font-size: 12.5px;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .sheet-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 6px 14px;
+      flex-shrink: 0;
+    }
+    .sheet-badge-seal {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      color: #4338ca;
+    }
+    .sheet-badge-sub {
+      font-size: 9px;
+      font-weight: 700;
+      color: #10b981;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .sheet-divider {
+      height: 2.5px;
+      background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 50%, #38bdf8 100%);
+      margin-top: 16px;
+      border-radius: 2px;
+    }
+    .sheet-intro-note {
+      background: #f8fafc;
+      border-left: 3px solid #4f46e5;
+      padding: 11px 16px;
+      border-radius: 0 8px 8px 0;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #475569;
+      margin-bottom: 24px;
+    }
+    .sheet-ref-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      margin-bottom: 28px;
+    }
+    .sheet-ref-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sheet-ref-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    }
+    .sheet-ref-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 12px;
+    }
+    .sheet-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 3px 10px rgba(79, 70, 229, 0.25);
+    }
+    .sheet-avatar--blue {
+      background: linear-gradient(135deg, #0284c7, #0d9488);
+      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+    }
+    .sheet-ref-meta {
+      flex: 1;
+    }
+    .sheet-verified-pill {
+      display: inline-block;
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 1.5px 7px;
+      border-radius: 99px;
+      margin-bottom: 3px;
+    }
+    .sheet-ref-name {
+      font-family: 'Space Grotesk', -apple-system, sans-serif;
+      font-size: 17.5px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 2px 0 3px;
+      line-height: 1.25;
+    }
+    .sheet-ref-quals {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      color: #4338ca;
+      margin-bottom: 3px;
+    }
+    .sheet-ref-rank {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 3px;
+    }
+    .sheet-rank-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+    .sheet-rank-badge--prof {
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+    }
+    .sheet-rank-badge--assoc {
+      background: #f0f9ff;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+    .sheet-rel-tag {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 500;
+    }
+    .sheet-ref-affil {
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      border-radius: 8px;
+      padding: 9px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 12px;
+      color: #334155;
+      margin-bottom: 11px;
+    }
+    .sheet-affil-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sheet-affil-icon {
+      font-size: 13px;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .sheet-affil-text {
+      flex: 1;
+    }
+    .sheet-portal-link {
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .sheet-portal-link:hover {
+      text-decoration: underline;
+    }
+    .sheet-ref-contacts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 11px;
+    }
+    .sheet-contact-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 5px 11px;
+      font-size: 11.5px;
+    }
+    .sheet-contact-label {
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      font-size: 9.5px;
+    }
+    .sheet-contact-val {
+      color: #0f172a;
+      text-decoration: none;
+      font-weight: 600;
+      font-family: 'Fira Code', monospace;
+    }
+    .sheet-contact-val:hover {
+      color: #4f46e5;
+      text-decoration: underline;
+    }
+    .sheet-copy-btn {
+      background: #e2e8f0;
+      border: none;
+      color: #475569;
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 2px 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .sheet-copy-btn:hover {
+      background: #4f46e5;
+      color: #ffffff;
+    }
+    .sheet-ref-endorsement {
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #475569;
+      border-top: 1px dashed #e2e8f0;
+      padding-top: 9px;
+    }
+    .sheet-footer {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .sheet-footer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sheet-seal-mark {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11.5px;
+      color: #0f172a;
+    }
+    .sheet-seal-icon {
+      font-size: 20px;
+      color: #4f46e5;
+    }
+    .sheet-verification-statement {
+      font-size: 10.5px;
+      color: #64748b;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 640px) {
+      .cv-page-card--sheet {
+        padding: 28px 18px 32px;
+      }
+      .sheet-brand {
+        flex-direction: column;
+      }
+      .sheet-ref-contacts {
+        flex-direction: column;
+      }
+      .sheet-contact-item {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .cv-toolbar, .floating-page-nav, .bg-glow, .page-indicator-pill {
+        display: none !important;
+      }
+      .cv-viewer-container {
+        padding: 0 !important;
+        gap: 0 !important;
+      }
+      .cv-page-card {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        page-break-after: always;
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+      .cv-page-img {
+        width: 100% !important;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .cv-toolbar {
+        padding: 10px 14px;
+        flex-wrap: wrap;
+      }
+      .toolbar-center {
+        display: none;
+      }
+      .cv-title {
+        font-size: 13.5px;
+      }
+      .btn-action {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+      .cv-viewer-container {
+        padding: 16px 8px 48px;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="bg-glow-secondary"></div>
+  <div class="bg-dot-matrix"></div>
+
+  <!-- Header Toolbar -->
+  <header class="cv-toolbar">
+    <div class="toolbar-left">
+      <a class="btn-back" href="{% url 'home' %}">
+        <span aria-hidden="true">&larr;</span>
+        <span>Portfolio</span>
+      </a>
+      <div class="cv-info-badge">
+        <span class="cv-title">Kazi Rezwan Rashid</span>
+        <span class="cv-subtitle">Curriculum Vitae · ML Engineer</span>
+      </div>
+    </div>
+
+    <!-- Center Zoom Controls -->
+    <div class="toolbar-center">
+      <button class="tool-btn" type="button" id="zoomOutBtn" title="Zoom Out">&minus;</button>
+      <span class="zoom-level-text" id="zoomLabel">100%</span>
+      <button class="tool-btn" type="button" id="zoomInBtn" title="Zoom In">&plus;</button>
+      <button class="tool-btn" type="button" id="zoomResetBtn" title="Reset Zoom" style="font-size: 11px; width: auto; padding: 0 6px;">Fit</button>
+    </div>
+
+    <!-- Right Actions -->
+    <div class="toolbar-right">
+      <button class="btn-action btn-ghost-action" type="button" id="openRefModalBtn" title="Academic & Professional References">
+        <span class="lnr lnr-users"></span>
+        <span>References</span>
+      </button>
+      <a class="btn-action btn-ghost-action" href="{{ raw_url }}" target="_blank" title="Stream raw vector PDF">
+        <span>Raw PDF</span>
+        <span aria-hidden="true">&#8599;</span>
+      </a>
+      <button class="btn-action btn-ghost-action" type="button" onclick="window.print()" title="Print CV">
+        <span>Print</span>
+      </button>
+      <a class="btn-action btn-download" href="{{ download_url }}" download="Cv_Machine_Learning_Engineer.pdf" id="downloadCvBtn">
+        <span class="lnr lnr-download" style="font-size: 14px;" aria-hidden="true"></span>
+        <span>Download PDF</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Document Container -->
+  <main class="cv-viewer-container" id="cvContainer">
+    <!-- Page 1 -->
+    <div class="cv-page-wrapper" id="page1Wrapper" data-reveal="bottom-left">
+      <div class="page-indicator-pill">Page 1 of 3</div>
+      <div class="cv-page-card" id="page1Card">
+        <img class="cv-page-img" src="{% static 'resumes/cv_page_1.png' %}" alt="Kazi Rezwan Rashid CV - Page 1" id="cvPage1">
+      </div>
+    </div>
+
+    <!-- Page 2 -->
+    <div class="cv-page-wrapper" id="page2Wrapper" data-reveal="bottom-right">
+      <div class="page-indicator-pill">Page 2 of 3</div>
+      <div class="cv-page-card" id="page2Card">
+        <img class="cv-page-img" src="{% static 'resumes/cv_page_2.png' %}" alt="Kazi Rezwan Rashid CV - Page 2" id="cvPage2">
+      </div>
+    </div>
+
+    <!-- Page 3: Academic & Professional References Sheet -->
+    <div class="cv-page-wrapper" id="referencesWrapper" data-reveal="zoom">
+      <div class="page-indicator-pill">Page 3 of 3 · Official References Addendum</div>
+      <div class="cv-page-card cv-page-card--sheet" id="page3Card">
+        <!-- Sheet Header / Letterhead -->
+        <header class="sheet-header">
+          <div class="sheet-brand">
+            <div class="sheet-brand-text">
+              <span class="sheet-kicker" data-reveal="left">CURRICULUM VITAE ADDENDUM · CANDIDATE CREDENTIALS</span>
+              <h1 class="sheet-title" data-reveal="right">Academic &amp; Professional References</h1>
+              <p class="sheet-subtitle" data-reveal="bottom-left">Faculty of Mathematical &amp; Physical Sciences · Jahangirnagar University, Savar, Dhaka-1342, Bangladesh</p>
+            </div>
+            <div class="sheet-badge" data-reveal="zoom">
+              <div class="sheet-badge-seal">JU CSE</div>
+              <span class="sheet-badge-sub">VERIFIED REF</span>
+            </div>
+          </div>
+          <div class="sheet-divider" data-reveal="right"></div>
+        </header>
+
+        <!-- Sheet Body with Referees -->
+        <div class="sheet-body">
+          <div class="sheet-intro-note" data-reveal="bottom-right">
+            The following senior faculty members have directly supervised and evaluated the academic research, thesis publications, undergraduate coursework, and technical contributions of <strong>Kazi Rezwan Rashid</strong>. Official institutional verification inquiries are welcomed.
+          </div>
+
+          <div class="sheet-ref-grid" data-stagger-grid>
+            <!-- Referee 1: Md. Golam Moazzam, PhD -->
+            <article class="sheet-ref-card" data-reveal="bottom-left">
+              <div class="sheet-ref-top">
+                <div class="sheet-avatar">GM</div>
+                <div class="sheet-ref-meta">
+                  <div class="sheet-verified-pill">&#10003; Verified Reference</div>
+                  <h2 class="sheet-ref-name">Md. Golam Moazzam, PhD</h2>
+                  <div class="sheet-ref-rank">
+                    <span class="sheet-rank-badge sheet-rank-badge--prof">Professor</span>
+                    <span class="sheet-rel-tag">Academic &amp; Research Supervisor</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sheet-ref-affil">
+                <div class="sheet-affil-row">
+                  <span class="sheet-affil-icon">&#127970;</span>
+                  <span class="sheet-affil-text">Department of Computer Science and Engineering</span>
+                </div>
+                <div class="sheet-affil-row">
+                  <span class="sheet-affil-icon">&#128205;</span>
+                  <span class="sheet-affil-text">Jahangirnagar University, Savar, Dhaka-1342, Bangladesh</span>
+                </div>
+                <div class="sheet-affil-row">
+                  <span class="sheet-affil-icon">&#127760;</span>
+                  <a href="https://juniv.edu/department/cse" target="_blank" rel="noopener noreferrer" class="sheet-portal-link">Department Portal: juniv.edu/department/cse &#8599;</a>
+                </div>
+              </div>
+
+              <div class="sheet-ref-contacts">
+                <div class="sheet-contact-item">
+                  <span class="sheet-contact-label">Cell Phone:</span>
+                  <a href="tel:01922-230643" class="sheet-contact-val">01922-230643</a>
+                  <button class="sheet-copy-btn" type="button" data-copy-text="01922-230643" title="Copy Phone Number">Copy</button>
+                </div>
+                <div class="sheet-contact-item">
+                  <span class="sheet-contact-label">Official Email:</span>
+                  <a href="mailto:khokan@juniv.edu" class="sheet-contact-val">khokan@juniv.edu</a>
+                  <button class="sheet-copy-btn" type="button" data-copy-text="khokan@juniv.edu" title="Copy Email">Copy</button>
+                </div>
+              </div>
+
+              <div class="sheet-ref-endorsement">
+                <strong>Supervision Scope:</strong> Supervised undergraduate research and thesis on deep learning architectures, low-resource natural language processing (NLP), and neural models.
+              </div>
+            </article>
+
+            <!-- Referee 2: Sarnali Basak -->
+            <article class="sheet-ref-card" data-reveal="bottom-right">
+              <div class="sheet-ref-top">
+                <div class="sheet-avatar sheet-avatar--blue">SB</div>
+                <div class="sheet-ref-meta">
+                  <div class="sheet-verified-pill">&#10003; Verified Reference</div>
+                  <h2 class="sheet-ref-name">Sarnali Basak</h2>
+                  <div class="sheet-ref-quals">&#128220; BSc (JU), MSc (The University of Edinburgh, UK)</div>
+                  <div class="sheet-ref-rank">
+                    <span class="sheet-rank-badge sheet-rank-badge--assoc">Associate Professor</span>
+                    <span class="sheet-rel-tag">Undergraduate Mentor &amp; Course Instructor</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sheet-ref-affil">
+                <div class="sheet-affil-row">
+                  <span class="sheet-affil-icon">&#127970;</span>
+                  <span class="sheet-affil-text">Department of Computer Science and Engineering</span>
+                </div>
+                <div class="sheet-affil-row">
+                  <span class="sheet-affil-icon">&#128205;</span>
+                  <span class="sheet-affil-text">Jahangirnagar University, Savar, Dhaka-1342, Bangladesh</span>
+                </div>
+                <div class="sheet-affil-row">
+                  <span class="sheet-affil-icon">&#127760;</span>
+                  <a href="https://juniv.edu/department/cse" target="_blank" rel="noopener noreferrer" class="sheet-portal-link">Department Portal: juniv.edu/department/cse &#8599;</a>
+                </div>
+              </div>
+
+              <div class="sheet-ref-contacts">
+                <div class="sheet-contact-item">
+                  <span class="sheet-contact-label">Institutional Email:</span>
+                  <a href="mailto:sarnali.cse@juniv.edu" class="sheet-contact-val">sarnali.cse@juniv.edu</a>
+                  <button class="sheet-copy-btn" type="button" data-copy-text="sarnali.cse@juniv.edu" title="Copy Email">Copy</button>
+                </div>
+                <div class="sheet-contact-item">
+                  <span class="sheet-contact-label">Direct Email:</span>
+                  <a href="mailto:sarnali.cse@gmail.com" class="sheet-contact-val">sarnali.cse@gmail.com</a>
+                  <button class="sheet-copy-btn" type="button" data-copy-text="sarnali.cse@gmail.com" title="Copy Email">Copy</button>
+                </div>
+              </div>
+
+              <div class="sheet-ref-endorsement">
+                <strong>Supervision Scope:</strong> Course instructor and academic mentor for advanced algorithms, data structures, and computer science foundations during undergraduate study.
+              </div>
+            </article>
+          </div>
+
+          <!-- Sheet Certification Footer -->
+          <footer class="sheet-footer">
+            <div class="sheet-footer-inner">
+              <div class="sheet-seal-mark">
+                <span class="sheet-seal-icon">&#127891;</span>
+                <div>
+                  <strong>Jahangirnagar University CSE Academic Reference Dossier</strong>
+                  <div>Candidate: Kazi Rezwan Rashid · B.Sc. in Computer Science &amp; Engineering</div>
+                </div>
+              </div>
+              <div class="sheet-verification-statement">
+                Referees can be reached directly via official university email addresses or phone for verification of academic standing, research publications, and professional character.
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Quick Page Switcher -->
+  <aside class="floating-page-nav">
+    <span>Jump to:</span>
+    <a href="#page1Wrapper">Page 1</a>
+    <span>&bull;</span>
+    <a href="#page2Wrapper">Page 2</a>
+    <span>&bull;</span>
+    <a href="#referencesWrapper" style="color: #a5b4fc; font-weight: 700;">Page 3 (References)</a>
+    <span>&bull;</span>
+    <a href="{{ download_url }}" download>Save (100 KB)</a>
+  </aside>
+
+
+  <!-- Academic References Modal -->
+  <div class="ref-modal-backdrop" id="refModalBackdrop" style="display:none;">
+    <div class="ref-modal-window" role="dialog" aria-labelledby="refModalTitle" aria-modal="true">
+      <div class="ref-modal-header">
+        <div>
+          <div style="font-size: 11px; font-weight: 700; color: #818cf8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 2px;">Jahangirnagar University · Department of CSE</div>
+          <h2 id="refModalTitle" style="font-size: 18px; font-weight: 700; color: #fff; font-family: 'Space Grotesk', sans-serif; margin: 0;">Academic &amp; Professional References</h2>
+        </div>
+        <button class="ref-modal-close-btn" type="button" id="closeRefModalBtn" aria-label="Close references modal">&times;</button>
+      </div>
+      
+      <div class="ref-modal-body">
+        <!-- Ref 1: Prof. Md. Golam Moazzam -->
+        <div class="modal-ref-card">
+          <div class="modal-ref-header">
+            <div class="modal-ref-avatar">GM</div>
+            <div class="modal-ref-info">
+              <div class="modal-badge-row">
+                <span class="modal-ref-verified">&#10003; Verified Reference</span>
+                <span class="modal-ref-rel">Academic &amp; Research Supervisor</span>
+              </div>
+              <h3 class="modal-ref-name">Md. Golam Moazzam, PhD</h3>
+              <div class="modal-ref-rank"><span class="lnr lnr-graduation-hat"></span> Professor</div>
+            </div>
+          </div>
+          <div class="modal-ref-details">
+            <div class="modal-ref-line"><span class="lnr lnr-apartment"></span> <span>Department of Computer Science and Engineering</span></div>
+            <div class="modal-ref-line"><span class="lnr lnr-map-marker"></span> <span>Jahangirnagar University, Savar, Dhaka-1342, Bangladesh</span></div>
+            <div style="margin-top: 6px;">
+              <a href="https://juniv.edu/department/cse" target="_blank" rel="noopener noreferrer" class="modal-portal-link">
+                <span>JU CSE Department Portal</span> <span style="font-size: 11px;">&#8599;</span>
+              </a>
+            </div>
+          </div>
+          <div class="modal-contact-row">
+            <a href="tel:01922-230643" class="modal-chip modal-chip--tel"><span class="lnr lnr-phone-handset"></span> <span>01922-230643</span></a>
+            <a href="mailto:khokan@juniv.edu" class="modal-chip modal-chip--mail"><span class="lnr lnr-envelope"></span> <span>khokan@juniv.edu</span></a>
+          </div>
+        </div>
+
+        <!-- Ref 2: Sarnali Basak -->
+        <div class="modal-ref-card">
+          <div class="modal-ref-header">
+            <div class="modal-ref-avatar">SB</div>
+            <div class="modal-ref-info">
+              <div class="modal-badge-row">
+                <span class="modal-ref-verified">&#10003; Verified Reference</span>
+                <span class="modal-ref-rel">Undergraduate Mentor &amp; Course Instructor</span>
+              </div>
+              <h3 class="modal-ref-name">Sarnali Basak</h3>
+              <div class="modal-ref-quals">&#128220; BSc (JU), MSc (The University of Edinburgh, UK)</div>
+              <div><span class="modal-ref-rank modal-ref-rank--assoc"><span class="lnr lnr-apartment"></span> Associate Professor</span></div>
+            </div>
+          </div>
+          <div class="modal-ref-details">
+            <div class="modal-ref-line"><span class="lnr lnr-apartment"></span> <span>Department of Computer Science and Engineering</span></div>
+            <div class="modal-ref-line"><span class="lnr lnr-map-marker"></span> <span>Jahangirnagar University, Savar, Dhaka-1342, Bangladesh</span></div>
+            <div style="margin-top: 6px;">
+              <a href="https://juniv.edu/department/cse" target="_blank" rel="noopener noreferrer" class="modal-portal-link">
+                <span>JU CSE Department Portal</span> <span style="font-size: 11px;">&#8599;</span>
+              </a>
+            </div>
+          </div>
+          <div class="modal-contact-row">
+            <a href="mailto:sarnali.cse@juniv.edu" class="modal-chip modal-chip--mail"><span class="lnr lnr-envelope"></span> <span>sarnali.cse@juniv.edu</span></a>
+            <a href="mailto:sarnali.cse@gmail.com" class="modal-chip modal-chip--mail"><span class="lnr lnr-envelope"></span> <span>sarnali.cse@gmail.com</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zoom & Interaction Logic -->
+  <script>
+    (function() {
+      var currentZoom = 100;
+      var zoomLevels = [60, 75, 90, 100, 115, 130, 150];
+      var zoomLabel = document.getElementById('zoomLabel');
+      var page1Wrapper = document.getElementById('page1Wrapper');
+      var page2Wrapper = document.getElementById('page2Wrapper');
+      var zoomInBtn = document.getElementById('zoomInBtn');
+      var zoomOutBtn = document.getElementById('zoomOutBtn');
+      var zoomResetBtn = document.getElementById('zoomResetBtn');
+
+      function applyZoom(zoom) {
+        currentZoom = Math.min(Math.max(zoom, 50), 160);
+        zoomLabel.textContent = currentZoom + '%';
+        
+        var scale = currentZoom / 100;
+        var maxW = (850 * scale) + 'px';
+        
+        var p1 = document.getElementById('page1Card');
+        var p2 = document.getElementById('page2Card');
+        var p3 = document.getElementById('page3Card');
+        if (p1) p1.style.maxWidth = maxW;
+        if (p2) p2.style.maxWidth = maxW;
+        if (p3) p3.style.maxWidth = maxW;
+      }
+
+      zoomInBtn.addEventListener('click', function() {
+        applyZoom(currentZoom + 15);
+      });
+
+      zoomOutBtn.addEventListener('click', function() {
+        applyZoom(currentZoom - 15);
+      });
+
+      zoomResetBtn.addEventListener('click', function() {
+        applyZoom(100);
+      });
+
+      // Keyboard shortcuts
+      window.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === '=' || e.key === '+')) {
+          e.preventDefault();
+          applyZoom(currentZoom + 15);
+        } else if ((e.ctrlKey || e.metaKey) && (e.key === '-')) {
+          e.preventDefault();
+          applyZoom(currentZoom - 15);
+        } else if ((e.ctrlKey || e.metaKey) && (e.key === '0')) {
+          e.preventDefault();
+          applyZoom(100);
+        } else if (e.key === 'Escape') {
+          closeModal();
+        }
+      });
+
+      // References Navigation & Modal Controls
+      var modal = document.getElementById('refModalBackdrop');
+      var openBtn = document.getElementById('openRefModalBtn');
+      var closeBtn = document.getElementById('closeRefModalBtn');
+
+      function openModal() {
+        if (modal) modal.style.display = 'flex';
+      }
+      function closeModal() {
+        if (modal) modal.style.display = 'none';
+      }
+
+      if (openBtn) {
+        openBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var target = document.getElementById('referencesWrapper');
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+            var p3 = document.getElementById('page3Card');
+            if (p3) {
+              p3.style.boxShadow = '0 0 0 3px #818cf8, 0 10px 40px rgba(0,0,0,0.6)';
+              setTimeout(function() {
+                p3.style.boxShadow = '';
+              }, 1800);
+            }
+          } else {
+            openModal();
+          }
+        });
+      }
+
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) closeModal();
+        });
+      }
+
+      // One-click copy buttons with instant green checkmark feedback
+      document.querySelectorAll('[data-copy-text]').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var text = this.getAttribute('data-copy-text');
+          if (!text) return;
+          var self = this;
+          var oldHtml = self.innerHTML;
+          navigator.clipboard.writeText(text).then(function() {
+            self.innerHTML = '&#10003; Copied!';
+            self.style.background = '#10b981';
+            self.style.color = '#ffffff';
+            setTimeout(function() {
+              self.innerHTML = oldHtml;
+              self.style.background = '';
+              self.style.color = '';
+            }, 2000);
+          }).catch(function() {
+            var input = document.createElement('textarea');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            self.innerHTML = '&#10003; Copied!';
+            self.style.background = '#10b981';
+            self.style.color = '#ffffff';
+            setTimeout(function() {
+              self.innerHTML = oldHtml;
+              self.style.background = '';
+              self.style.color = '';
+            }, 2000);
+          });
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>

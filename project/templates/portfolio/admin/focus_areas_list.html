@@ -1,0 +1,51 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}Focus Areas (What I Work On) — Portfolio Hub{% endblock %}
+
+{% block content %}
+<div class="card-header">
+  <div>
+    <h1 class="card-title" style="font-size: 22px;">Focus Areas (Services / Specializations)</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">The 6 specialization cards featured in "02 — What I work on".</p>
+  </div>
+  <a class="btn-primary" href="{% url 'dashboard_focus_area_add' %}">
+    <span class="lnr lnr-plus-circle"></span> Add Focus Area
+  </a>
+</div>
+
+<div class="content-card" style="padding: 0; overflow: hidden;">
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th style="width: 80px;">Order</th>
+        <th style="width: 60px;">Icon</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th style="text-align: right; padding-right: 20px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td><b style="color: #818cf8;">#{{ item.order }}</b></td>
+          <td><span class="{{ item.icon_class }}" style="font-size: 18px; color: #818cf8;"></span></td>
+          <td><b style="color: #fff; font-size: 14.5px;">{{ item.title }}</b></td>
+          <td style="color: #cbd5e1; font-size: 13px; max-width: 350px;">{{ item.description }}</td>
+          <td style="text-align: right; padding-right: 20px;">
+            <div class="table-actions" style="justify-content: flex-end;">
+              <a class="btn-secondary" style="padding: 5px 12px; font-size: 12px;" href="{% url 'dashboard_focus_area_edit' item.pk %}">Edit</a>
+              <a class="btn-danger" href="{% url 'dashboard_focus_area_delete' item.pk %}">Delete</a>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 30px; color: #94a3b8;">
+            No focus areas configured.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,262 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}Hero Section &amp; Stats — HOME MENU{% endblock %}
+
+{% block content %}
+<div class="card-header">
+  <div>
+    <div style="font-size: 11px; font-weight: 700; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px;">HOME MENU &bull; SECTION 01</div>
+    <h1 class="card-title" style="font-size: 22px; margin-top: 2px;">Hero Section &amp; Key Statistics</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">Update everything inside the top Hero area, system diagram, live demo, and Key Statistics cards.</p>
+  </div>
+</div>
+
+<!-- 1. KEY STATS CARDS CRUD -->
+<div class="content-card">
+  <div class="card-header" style="padding-bottom: 12px; margin-bottom: 16px;">
+    <div>
+      <div class="card-title" style="font-size: 16.5px; color: #34d399;">
+        <span class="lnr lnr-chart-bars"></span> Key Statistics Cards (Displayed on Hero)
+      </div>
+      <p style="color: var(--dash-muted); font-size: 12.5px; margin-top: 2px;">Create, update, or delete the metric badges (e.g. 6+, Real-time, LLM &middot; RAG).</p>
+    </div>
+    <a class="btn-primary" href="{% url 'dashboard_stat_add' %}" style="font-size: 12.5px; padding: 6px 14px;">
+      <span class="lnr lnr-plus-circle"></span> + Add Statistic
+    </a>
+  </div>
+
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th style="width: 70px;">Order</th>
+        <th style="width: 140px;">Metric Value</th>
+        <th>Label / Description</th>
+        <th style="text-align: right; padding-right: 20px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stat in stats %}
+        <tr>
+          <td><b style="color: #818cf8;">#{{ stat.order }}</b></td>
+          <td><b style="font-size: 16px; color: #fff;">{{ stat.number }}</b></td>
+          <td><span style="color: #cbd5e1;">{{ stat.label }}</span></td>
+          <td style="text-align: right; padding-right: 20px;">
+            <div class="table-actions" style="justify-content: flex-end;">
+              <a class="btn-secondary" style="padding: 4px 10px; font-size: 12px;" href="{% url 'dashboard_stat_edit' stat.pk %}">Edit</a>
+              <a class="btn-danger" href="{% url 'dashboard_stat_delete' stat.pk %}">Delete</a>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 24px; color: #94a3b8;">
+            No statistics configured. Click "+ Add Statistic" above.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- 2. HERO SECTION MAIN FORM -->
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="hidden" name="save_hero" value="1">
+
+  {% if form.errors %}
+    <div class="dash-alert" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171; margin-bottom: 20px;">
+      <span class="lnr lnr-cross-circle"></span>
+      <div>
+        <div style="font-weight: 700;">Please correct the errors below before saving:</div>
+        <ul style="margin: 6px 0 0 16px; font-size: 13px;">
+          {% for field, errors in form.errors.items %}
+            <li><b>{{ field }}:</b> {{ errors|striptags }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Hero Identity -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #818cf8;">
+      <span class="lnr lnr-star"></span> Hero Headline &amp; Identity
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Site Owner / Display Name</label>
+        {{ form.name }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brand Kicker (Under Logo)</label>
+        {{ form.brand_kicker }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Status Chip (Pill with Live Dot)</label>
+        {{ form.status_chip }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Hero Title (H1 Headline)</label>
+        {{ form.hero_title }}
+        <div class="form-help">Use Enter to create a new line in the big title.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Hero Lead Paragraph</label>
+      {{ form.hero_lead }}
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Hero Avatar Photo</label>
+        {{ form.avatar }}
+        {% if profile.avatar %}
+          <div style="margin-top: 8px; font-size: 12px; color: #94a3b8; display: flex; align-items: center; gap: 8px;">
+            <img src="{{ profile.avatar.url }}" alt="Avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid #818cf8;">
+            <span>Current: <a href="{{ profile.avatar.url }}" target="_blank" style="color: #818cf8;">View photo</a></span>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Hero Résumé PDF Document</label>
+        {{ form.resume_file }}
+        {% if profile.resume_file %}
+          <div style="margin-top: 8px; font-size: 12px; color: #94a3b8;">
+            Current PDF: <a href="{% url 'resume' %}?download=1" target="_blank" style="color: #818cf8; font-weight: 600;">Download PDF (100 KB)</a> &middot; <a href="{% url 'resume' %}" target="_blank" style="color: #a78bfa;">View CV in Web Viewer</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Architecture Diagram -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #f59e0b;">
+      <span class="lnr lnr-diagram"></span> Hero Streaming Architecture Diagram
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Diagram Head Label</label>
+        {{ form.diagram_head_label }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Live Indicator Text</label>
+        {{ form.diagram_stream_label }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Source Node (Top)</label>
+        {{ form.diagram_source }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Transport Node (Middle)</label>
+        {{ form.diagram_transport }}
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;">
+      <div class="form-group">
+        <label class="form-label">Model 1 (Title / Sub)</label>
+        {{ form.diagram_node_1_title }}
+        <div style="margin-top: 6px;">{{ form.diagram_node_1_sub }}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Model 2 (Title / Sub)</label>
+        {{ form.diagram_node_2_title }}
+        <div style="margin-top: 6px;">{{ form.diagram_node_2_sub }}</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Model 3 (Title / Sub)</label>
+        {{ form.diagram_node_3_title }}
+        <div style="margin-top: 6px;">{{ form.diagram_node_3_sub }}</div>
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Final Destination Eyebrow</label>
+        {{ form.diagram_final_eyebrow }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Final Destination Title</label>
+        {{ form.diagram_final_title }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Diagram Footnote Caption</label>
+      {{ form.diagram_caption }}
+    </div>
+  </div>
+
+  <!-- Featured Live Demo (01 Selected Work Showcase) -->
+  <div class="content-card">
+    <div class="card-title" style="margin-bottom: 18px; color: #a855f7;">
+      <span class="lnr lnr-laptop-phone"></span> Featured Live Demo (Home Showcase)
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Demo Badge Text</label>
+        {{ form.demo_badge }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Demo Title</label>
+        {{ form.demo_title }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Demo Description</label>
+      {{ form.demo_description }}
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Technology Stack Tags (comma-separated)</label>
+        {{ form.demo_tags }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Live Demo External URL</label>
+        {{ form.demo_url }}
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Browser Bar Domain Label</label>
+        {{ form.demo_domain_label }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Write-up Project Slug</label>
+        {{ form.demo_case_study_slug }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Demo Screenshot Image</label>
+      {{ form.demo_image }}
+      {% if profile.demo_image %}
+        <div style="margin-top: 8px; font-size: 12px; color: #94a3b8;">
+          Current image: <a href="{{ profile.demo_image.url }}" target="_blank" style="color: #a855f7;">View image</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 14px; margin-top: 10px; margin-bottom: 40px;">
+    <button class="btn-primary" type="submit" style="padding: 12px 28px; font-size: 15px;">
+      <span class="lnr lnr-checkmark-circle"></span> Save Hero Section Changes
+    </button>
+  </div>
+</form>
+{% endblock %}

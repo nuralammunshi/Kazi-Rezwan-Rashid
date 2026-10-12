@@ -1,0 +1,957 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Admin Control Center — {{ profile.name }}{% endblock %}
+
+{% block content %}
+<style>
+  .dash-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .stat-card:hover { 
+    transform: translateY(-2px); 
+    border-color: rgba(99, 102, 241, 0.4); 
+    background: rgba(17, 24, 39, 0.95);
+  }
+  .stat-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .stat-icon.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+  .stat-icon.blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+  .stat-icon.indigo { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+  .stat-icon.teal { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; }
+  .stat-icon.amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+  .stat-icon.green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+  .stat-icon.rose { background: rgba(244, 63, 94, 0.15); color: #fb7185; }
+  .stat-val { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; line-height: 1.1; }
+  .stat-lbl { font-size: 12.5px; color: var(--dash-muted); margin-top: 3px; }
+
+  /* Quick Actions Bar */
+  .quick-bar {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .quick-bar-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--dash-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .quick-bar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .btn-create {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    padding: 7px 12px;
+    border-radius: 7px;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .btn-create:hover {
+    background: var(--dash-primary);
+    color: #fff;
+    border-color: var(--dash-primary);
+    transform: translateY(-1px);
+  }
+  .btn-create.special {
+    background: var(--dash-primary);
+    color: #fff;
+    border-color: var(--dash-primary);
+  }
+  .btn-create.special:hover {
+    background: var(--dash-primary-hover);
+  }
+
+  /* Management Tabs */
+  .tab-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 1px solid var(--dash-border);
+    margin-bottom: 22px;
+    padding-bottom: 2px;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--dash-muted);
+    padding: 10px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+  .tab-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .tab-btn.is-active {
+    color: #fff;
+    background: rgba(99, 102, 241, 0.12);
+    border-bottom: 2px solid var(--dash-primary);
+  }
+  .tab-badge {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+  .tab-btn.is-active .tab-badge {
+    background: var(--dash-primary);
+    color: #fff;
+  }
+
+  /* Tab Panels */
+  .tab-panel {
+    display: none;
+  }
+  .tab-panel.is-active {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Badges */
+  .badge-category {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .badge-active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .badge-neutral {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+
+  /* Tool Chips */
+  .chip-tag {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.06);
+    color: #cbd5e1;
+    font-size: 11.5px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    margin: 2px;
+  }
+
+  /* Gallery Grid */
+  .gallery-grid-dash {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+  .gallery-card-dash {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--dash-border);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .gallery-card-dash img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+  }
+  .gallery-card-body {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+</style>
+
+<!-- Welcome Header -->
+<div style="margin-bottom: 22px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px;">
+  <div>
+    <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; margin-bottom: 4px;">
+      Admin Control Center
+    </h1>
+    <p style="color: var(--dash-muted); font-size: 14px;">
+      Welcome back, <b style="color: #fff;">{{ request.user.username }}</b>. Complete CRUD management for <b style="color: #818cf8;">{{ profile.name }}</b>'s portfolio, CV data, and case studies.
+    </p>
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <a class="live-site-btn" href="{% url 'home' %}" target="_blank">
+      <span class="lnr lnr-eye"></span> View Live Site
+    </a>
+    <a class="live-site-btn" href="{% url 'resume_pdf_direct' %}" target="_blank" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.3);">
+      <span class="lnr lnr-file-empty"></span> Download CV PDF
+    </a>
+  </div>
+</div>
+
+<!-- Quick Creation & Action Toolbar -->
+<div class="quick-bar">
+  <div class="quick-bar-title">
+    <span class="lnr lnr-magic-wand" style="color: #818cf8;"></span>
+    <span>Quick Actions:</span>
+  </div>
+  <div class="quick-bar-actions">
+    <a class="btn-create special" href="{% url 'dashboard_project_add' %}">
+      <span class="lnr lnr-plus-circle"></span> + Add Project
+    </a>
+    <a class="btn-create" href="{% url 'dashboard_experience_add' %}">
+      <span class="lnr lnr-briefcase"></span> + Add Role / Degree
+    </a>
+    <a class="btn-create" href="{% url 'dashboard_skill_add' %}">
+      <span class="lnr lnr-code"></span> + Add Skill
+    </a>
+    <a class="btn-create" href="{% url 'dashboard_focus_area_add' %}">
+      <span class="lnr lnr-bullhorn"></span> + Add Focus Area
+    </a>
+    <a class="btn-create" href="{% url 'dashboard_stat_add' %}">
+      <span class="lnr lnr-chart-bars"></span> + Add Key Stat
+    </a>
+    <a class="btn-create" href="{% url 'dashboard_reference_add' %}">
+      <span class="lnr lnr-users"></span> + Add Reference
+    </a>
+    <a class="btn-create" href="{% url 'dashboard_gallery_add' %}">
+      <span class="lnr lnr-picture"></span> + Upload Photo
+    </a>
+    <a class="btn-create" href="{% url 'dashboard_home_hero' %}">
+      <span class="lnr lnr-cog"></span> Profile Settings
+    </a>
+  </div>
+</div>
+
+<!-- Metrics Counters -->
+<div class="dash-stats-grid">
+  <a class="stat-card" href="#tab-projects" onclick="switchTab('tab-projects'); return false;">
+    <div class="stat-icon purple"><span class="lnr lnr-layers"></span></div>
+    <div>
+      <div class="stat-val">{{ projects_count }}</div>
+      <div class="stat-lbl">Projects / Publications</div>
+    </div>
+  </a>
+
+  <a class="stat-card" href="#tab-experience" onclick="switchTab('tab-experience'); return false;">
+    <div class="stat-icon blue"><span class="lnr lnr-briefcase"></span></div>
+    <div>
+      <div class="stat-val">{{ experiences_count }}</div>
+      <div class="stat-lbl">Experience &amp; Education</div>
+    </div>
+  </a>
+
+  <a class="stat-card" href="#tab-skills" onclick="switchTab('tab-skills'); return false;">
+    <div class="stat-icon indigo"><span class="lnr lnr-code"></span></div>
+    <div>
+      <div class="stat-val">{{ skills_count }}</div>
+      <div class="stat-lbl">Skills &amp; Tooling</div>
+    </div>
+  </a>
+
+  <a class="stat-card" href="#tab-focus" onclick="switchTab('tab-focus'); return false;">
+    <div class="stat-icon teal"><span class="lnr lnr-magic-wand"></span></div>
+    <div>
+      <div class="stat-val">{{ focus_areas_count }}</div>
+      <div class="stat-lbl">Focus Areas</div>
+    </div>
+  </a>
+
+  <a class="stat-card" href="#tab-stats" onclick="switchTab('tab-stats'); return false;">
+    <div class="stat-icon amber"><span class="lnr lnr-star"></span></div>
+    <div>
+      <div class="stat-val">{{ stats_count }}</div>
+      <div class="stat-lbl">Hero Key Stats</div>
+    </div>
+  </a>
+
+  <a class="stat-card" href="#tab-references" onclick="switchTab('tab-references'); return false;">
+    <div class="stat-icon green"><span class="lnr lnr-users"></span></div>
+    <div>
+      <div class="stat-val">{{ references_count }}</div>
+      <div class="stat-lbl">Academic References</div>
+    </div>
+  </a>
+
+  <a class="stat-card" href="#tab-messages" onclick="switchTab('tab-messages'); return false;">
+    <div class="stat-icon rose"><span class="lnr lnr-bubble"></span></div>
+    <div>
+      <div class="stat-val">{{ messages_unread }}</div>
+      <div class="stat-lbl">Unread Messages</div>
+    </div>
+  </a>
+</div>
+
+<!-- Management Navigation Tabs -->
+<div class="tab-nav" id="dashTabNav">
+  <button class="tab-btn is-active" data-tab="tab-projects">
+    <span class="lnr lnr-layers"></span> Projects &amp; Publications <span class="tab-badge">{{ projects_count }}</span>
+  </button>
+  <button class="tab-btn" data-tab="tab-experience">
+    <span class="lnr lnr-briefcase"></span> Experience &amp; Education <span class="tab-badge">{{ experiences_count }}</span>
+  </button>
+  <button class="tab-btn" data-tab="tab-skills">
+    <span class="lnr lnr-code"></span> Skills &amp; Tooling <span class="tab-badge">{{ skills_count }}</span>
+  </button>
+  <button class="tab-btn" data-tab="tab-focus">
+    <span class="lnr lnr-magic-wand"></span> Focus Areas <span class="tab-badge">{{ focus_areas_count }}</span>
+  </button>
+  <button class="tab-btn" data-tab="tab-stats">
+    <span class="lnr lnr-star"></span> Key Stats <span class="tab-badge">{{ stats_count }}</span>
+  </button>
+  <button class="tab-btn" data-tab="tab-references">
+    <span class="lnr lnr-users"></span> References <span class="tab-badge">{{ references_count }}</span>
+  </button>
+  <button class="tab-btn" data-tab="tab-gallery">
+    <span class="lnr lnr-picture"></span> Gallery Photos <span class="tab-badge">{{ gallery_count }}</span>
+  </button>
+  <button class="tab-btn" data-tab="tab-messages">
+    <span class="lnr lnr-bubble"></span> Visitor Inquiries <span class="tab-badge">{{ recent_messages|length }}</span>
+  </button>
+  <button class="tab-btn" data-tab="tab-profile">
+    <span class="lnr lnr-user"></span> CV Profile &amp; Bio
+  </button>
+</div>
+
+<!-- ==========================================
+     TAB 1: PROJECTS & PUBLICATIONS
+     ========================================== -->
+<div class="tab-panel is-active" id="tab-projects">
+  <div class="content-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Projects &amp; Case Studies</div>
+        <p style="color: var(--dash-muted); font-size: 13px; margin-top: 4px;">
+          Create, edit, or remove project write-ups, code repos, and IEEE research publications.
+        </p>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <a class="btn-primary" href="{% url 'dashboard_project_add' %}">
+          <span class="lnr lnr-plus-circle"></span> + Add Project
+        </a>
+        <a class="btn-secondary" href="{% url 'dashboard_category_add' %}">
+          <span class="lnr lnr-tag"></span> + Add Category
+        </a>
+      </div>
+    </div>
+
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th style="width: 50px;">Index</th>
+          <th>Title &amp; URL</th>
+          <th>Category</th>
+          <th>Tech Stack</th>
+          <th>Featured</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for proj in all_projects %}
+          <tr>
+            <td><span style="font-weight: 700; color: #818cf8;">{{ proj.index_number|default:forloop.counter }}</span></td>
+            <td>
+              <div style="font-weight: 600; color: #fff;">{{ proj.title }}</div>
+              <div style="font-size: 12px; color: #64748b;">
+                <a href="{% url 'project_detail' proj.slug %}" target="_blank" style="color: #64748b; text-decoration: underline;">
+                  /projects/{{ proj.slug }}/ <span class="lnr lnr-arrow-up-right"></span>
+                </a>
+              </div>
+            </td>
+            <td><span class="badge-category">{{ proj.category_label }}</span></td>
+            <td>
+              <div style="max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                {% for tag in proj.tags|slice:":3" %}
+                  <span class="chip-tag">{{ tag }}</span>
+                {% endfor %}
+              </div>
+            </td>
+            <td>
+              {% if proj.is_featured %}
+                <span class="badge-active"><span class="lnr lnr-checkmark"></span> Home</span>
+              {% else %}
+                <span class="badge-neutral">Listing only</span>
+              {% endif %}
+            </td>
+            <td style="text-align: right;">
+              <div class="table-actions" style="justify-content: flex-end;">
+                <a class="btn-secondary" style="padding: 5px 12px; font-size: 12px;" href="{% url 'dashboard_project_edit' proj.pk %}">Edit</a>
+                <a class="btn-danger" href="{% url 'dashboard_project_delete' proj.pk %}">Delete</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 30px; color: var(--dash-muted);">
+              No projects added yet. <a class="btn-primary" href="{% url 'dashboard_project_add' %}" style="margin-left: 10px;">+ Add Your First Project</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==========================================
+     TAB 2: EXPERIENCE & EDUCATION
+     ========================================== -->
+<div class="tab-panel" id="tab-experience">
+  <div class="content-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Career Experience &amp; Academic Degrees</div>
+        <p style="color: var(--dash-muted); font-size: 13px; margin-top: 4px;">
+          Chronological timeline entries displayed on the About Page and Home Career Highlights.
+        </p>
+      </div>
+      <a class="btn-primary" href="{% url 'dashboard_experience_add' %}">
+        <span class="lnr lnr-plus-circle"></span> + Add Experience / Degree
+      </a>
+    </div>
+
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th style="width: 140px;">Timeline</th>
+          <th>Role / Degree</th>
+          <th>Institution / Organization</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for exp in all_experiences %}
+          <tr>
+            <td>
+              <span style="font-family: monospace; font-weight: 600; color: #a5b4fc;">{{ exp.year_range }}</span>
+            </td>
+            <td>
+              <div style="font-weight: 600; color: #fff;">{{ exp.title }}</div>
+              {% if exp.highlight_note %}
+                <div style="font-size: 12px; color: #64748b;">{{ exp.highlight_note }}</div>
+              {% endif %}
+            </td>
+            <td>
+              <div style="color: #cbd5e1;">{{ exp.organization }}</div>
+              {% if exp.organization_url %}
+                <a href="{{ exp.organization_url }}" target="_blank" style="font-size: 11px; color: #818cf8;">Visit Website &rarr;</a>
+              {% endif %}
+            </td>
+            <td>
+              {% if exp.is_current %}
+                <span class="badge-active">Current Role</span>
+              {% endif %}
+              {% if exp.show_on_home %}
+                <span class="badge-category" style="margin-left: 4px;">Home Highlights</span>
+              {% endif %}
+            </td>
+            <td style="text-align: right;">
+              <div class="table-actions" style="justify-content: flex-end;">
+                <a class="btn-secondary" style="padding: 5px 12px; font-size: 12px;" href="{% url 'dashboard_experience_edit' exp.pk %}">Edit</a>
+                <a class="btn-danger" href="{% url 'dashboard_experience_delete' exp.pk %}">Delete</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 30px; color: var(--dash-muted);">
+              No experience entries yet. <a class="btn-primary" href="{% url 'dashboard_experience_add' %}" style="margin-left: 10px;">+ Add Experience</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==========================================
+     TAB 3: SKILLS & TOOLING
+     ========================================== -->
+<div class="tab-panel" id="tab-skills">
+  <div class="content-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Skills &amp; Tooling Categories</div>
+        <p style="color: var(--dash-muted); font-size: 13px; margin-top: 4px;">
+          Displayed in Section 03 of the Home Page, with tools chips and associated case study links.
+        </p>
+      </div>
+      <a class="btn-primary" href="{% url 'dashboard_skill_add' %}">
+        <span class="lnr lnr-plus-circle"></span> + Add Skill Category
+      </a>
+    </div>
+
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Category Name</th>
+          <th>Tools &amp; Stack</th>
+          <th>Case Studies Linked</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cat in all_skills %}
+          <tr>
+            <td>
+              <div style="font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <span class="icon-tile {{ cat.icon_class|default:'lnr lnr-magic-wand' }}" style="width: 28px; height: 28px; font-size: 14px;"></span>
+                <span>{{ cat.title }}</span>
+              </div>
+            </td>
+            <td>
+              <div style="max-width: 380px;">
+                {% for tool in cat.tools %}
+                  <span class="chip-tag">{{ tool }}</span>
+                {% endfor %}
+              </div>
+            </td>
+            <td>
+              <span class="badge-category">{{ cat.case_links.count }} linked</span>
+            </td>
+            <td style="text-align: right;">
+              <div class="table-actions" style="justify-content: flex-end;">
+                <a class="btn-secondary" style="padding: 5px 12px; font-size: 12px;" href="{% url 'dashboard_skill_edit' cat.pk %}">Edit</a>
+                <a class="btn-danger" href="{% url 'dashboard_skill_delete' cat.pk %}">Delete</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 30px; color: var(--dash-muted);">
+              No skill categories added yet. <a class="btn-primary" href="{% url 'dashboard_skill_add' %}" style="margin-left: 10px;">+ Add Category</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==========================================
+     TAB 4: FOCUS AREAS (WHAT I WORK ON)
+     ========================================== -->
+<div class="tab-panel" id="tab-focus">
+  <div class="content-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">What I Work On (Focus Areas)</div>
+        <p style="color: var(--dash-muted); font-size: 13px; margin-top: 4px;">
+          The 6 grid tiles featured in Section 02 on the home page.
+        </p>
+      </div>
+      <a class="btn-primary" href="{% url 'dashboard_focus_area_add' %}">
+        <span class="lnr lnr-plus-circle"></span> + Add Focus Area
+      </a>
+    </div>
+
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th style="width: 60px;">Order</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for area in all_focus_areas %}
+          <tr>
+            <td><span style="font-weight: 700; color: #818cf8;">#{{ area.order }}</span></td>
+            <td>
+              <div style="font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <span class="{{ area.icon_class }}" style="color: #818cf8;"></span>
+                <span>{{ area.title }}</span>
+              </div>
+            </td>
+            <td style="color: #94a3b8; font-size: 13px; max-width: 420px;">{{ area.description }}</td>
+            <td style="text-align: right;">
+              <div class="table-actions" style="justify-content: flex-end;">
+                <a class="btn-secondary" style="padding: 5px 12px; font-size: 12px;" href="{% url 'dashboard_focus_area_edit' area.pk %}">Edit</a>
+                <a class="btn-danger" href="{% url 'dashboard_focus_area_delete' area.pk %}">Delete</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 30px; color: var(--dash-muted);">
+              No focus areas added yet. <a class="btn-primary" href="{% url 'dashboard_focus_area_add' %}" style="margin-left: 10px;">+ Add Focus Area</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==========================================
+     TAB 5: KEY STATS
+     ========================================== -->
+<div class="tab-panel" id="tab-stats">
+  <div class="content-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Hero Key Statistics</div>
+        <p style="color: var(--dash-muted); font-size: 13px; margin-top: 4px;">
+          Displayed in the hero banner (e.g. MSc &amp; BSc, 3+ Papers, 4+ Systems, 7.0 IELTS).
+        </p>
+      </div>
+      <a class="btn-primary" href="{% url 'dashboard_stat_add' %}">
+        <span class="lnr lnr-plus-circle"></span> + Add Statistic
+      </a>
+    </div>
+
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th style="width: 60px;">Order</th>
+          <th>Number / Highlight</th>
+          <th>Label / Description</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for st in all_stats %}
+          <tr>
+            <td><span style="font-weight: 700; color: #818cf8;">#{{ st.order }}</span></td>
+            <td><span style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: #fff;">{{ st.number }}</span></td>
+            <td style="color: #cbd5e1;">{{ st.label }}</td>
+            <td style="text-align: right;">
+              <div class="table-actions" style="justify-content: flex-end;">
+                <a class="btn-secondary" style="padding: 5px 12px; font-size: 12px;" href="{% url 'dashboard_stat_edit' st.pk %}">Edit</a>
+                <a class="btn-danger" href="{% url 'dashboard_stat_delete' st.pk %}">Delete</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 30px; color: var(--dash-muted);">
+              No statistics added yet. <a class="btn-primary" href="{% url 'dashboard_stat_add' %}" style="margin-left: 10px;">+ Add Statistic</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==========================================
+     TAB 6: ACADEMIC REFERENCES
+     ========================================== -->
+<div class="tab-panel" id="tab-references">
+  <div class="content-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Academic &amp; Professional References</div>
+        <p style="color: var(--dash-muted); font-size: 13px; margin-top: 4px;">
+          Senior faculty supervisors from Jahangirnagar University verifying candidate research.
+        </p>
+      </div>
+      <a class="btn-primary" href="{% url 'dashboard_reference_add' %}">
+        <span class="lnr lnr-plus-circle"></span> + Add Reference
+      </a>
+    </div>
+
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Referee Name</th>
+          <th>Designation &amp; Dept</th>
+          <th>Institution</th>
+          <th>Contact</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ref in all_references %}
+          <tr>
+            <td>
+              <div style="font-weight: 600; color: #fff;">{{ ref.name }}</div>
+              {% if ref.relationship %}
+                <div style="font-size: 12px; color: #818cf8;">{{ ref.relationship }}</div>
+              {% endif %}
+            </td>
+            <td>
+              <div style="color: #cbd5e1;">{{ ref.designation }}</div>
+              <div style="font-size: 12px; color: #64748b;">{{ ref.department }}</div>
+            </td>
+            <td>
+              <div style="color: #cbd5e1;">{{ ref.institution }}</div>
+            </td>
+            <td>
+              <div style="font-size: 12px; color: #a5b4fc;">{{ ref.email }}</div>
+              {% if ref.phone %}
+                <div style="font-size: 12px; color: #64748b;">{{ ref.phone }}</div>
+              {% endif %}
+            </td>
+            <td style="text-align: right;">
+              <div class="table-actions" style="justify-content: flex-end;">
+                <a class="btn-secondary" style="padding: 5px 12px; font-size: 12px;" href="{% url 'dashboard_reference_edit' ref.pk %}">Edit</a>
+                <a class="btn-danger" href="{% url 'dashboard_reference_delete' ref.pk %}">Delete</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 30px; color: var(--dash-muted);">
+              No references added yet. <a class="btn-primary" href="{% url 'dashboard_reference_add' %}" style="margin-left: 10px;">+ Add Reference</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==========================================
+     TAB 7: COMPANION GALLERY
+     ========================================== -->
+<div class="tab-panel" id="tab-gallery">
+  <div class="content-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Companion Gallery Photos</div>
+        <p style="color: var(--dash-muted); font-size: 13px; margin-top: 4px;">
+          Photos displayed in the Huck companion gallery section.
+        </p>
+      </div>
+      <a class="btn-primary" href="{% url 'dashboard_gallery_add' %}">
+        <span class="lnr lnr-plus-circle"></span> + Upload Photo
+      </a>
+    </div>
+
+    <div class="gallery-grid-dash">
+      {% for item in all_gallery %}
+        <div class="gallery-card-dash">
+          {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.title }}">
+          {% endif %}
+          <div class="gallery-card-body">
+            <div style="font-weight: 600; font-size: 13px; color: #fff;">{{ item.title }}</div>
+            {% if item.caption %}
+              <div style="font-size: 12px; color: #94a3b8;">{{ item.caption }}</div>
+            {% endif %}
+            <div style="margin-top: auto; padding-top: 8px;">
+              <a class="btn-danger" style="display: block; text-align: center; padding: 4px 8px; font-size: 11.5px;" href="{% url 'dashboard_gallery_delete' item.pk %}">
+                Delete Photo
+              </a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--dash-muted);">
+          No gallery photos uploaded yet. <a class="btn-primary" href="{% url 'dashboard_gallery_add' %}" style="margin-left: 10px;">+ Upload Photo</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     TAB 8: VISITOR INQUIRIES
+     ========================================== -->
+<div class="tab-panel" id="tab-messages">
+  <div class="content-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Visitor Messages &amp; Contact Inquiries</div>
+        <p style="color: var(--dash-muted); font-size: 13px; margin-top: 4px;">
+          Messages submitted by visitors via the Contact Form.
+        </p>
+      </div>
+      <span class="badge-category">{{ recent_messages|length }} Total Messages</span>
+    </div>
+
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Sender</th>
+          <th>Subject</th>
+          <th>Message Preview</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for msg in recent_messages %}
+          <tr>
+            <td>
+              <div style="font-weight: 600; color: #fff;">{{ msg.name }}</div>
+              <div style="font-size: 12px; color: #818cf8;">
+                <a href="mailto:{{ msg.email }}" style="color: #818cf8;">{{ msg.email }}</a>
+              </div>
+            </td>
+            <td><div style="color: #fff; font-weight: 500;">{{ msg.subject|default:"(No Subject)" }}</div></td>
+            <td style="color: #94a3b8; font-size: 12.5px; max-width: 300px;">{{ msg.message|truncatewords:15 }}</td>
+            <td style="font-size: 12px; color: #64748b;">{{ msg.created_at|date:"M d, Y H:i" }}</td>
+            <td>
+              {% if msg.is_read %}
+                <span class="badge-neutral">Read</span>
+              {% else %}
+                <span style="background: #ef4444; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700;">NEW</span>
+              {% endif %}
+            </td>
+            <td style="text-align: right;">
+              <div class="table-actions" style="justify-content: flex-end;">
+                <a class="btn-secondary" style="padding: 4px 10px; font-size: 11.5px;" href="{% url 'dashboard_message_toggle_read' msg.pk %}">
+                  {% if msg.is_read %}Mark Unread{% else %}Mark Read{% endif %}
+                </a>
+                <a class="btn-danger" style="padding: 4px 10px; font-size: 11.5px;" href="{% url 'dashboard_message_delete' msg.pk %}">Delete</a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 30px; color: var(--dash-muted);">
+              No messages received yet.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==========================================
+     TAB 9: CV PROFILE & SETTINGS
+     ========================================== -->
+<div class="tab-panel" id="tab-profile">
+  <div class="content-card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Candidate Profile &amp; CV Information</div>
+        <p style="color: var(--dash-muted); font-size: 13px; margin-top: 4px;">
+          Global biography, contact coordinates, social profiles, and hero presentation.
+        </p>
+      </div>
+      <a class="btn-primary" href="{% url 'dashboard_home_hero' %}">
+        <span class="lnr lnr-cog"></span> Edit Profile Settings
+      </a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--dash-border); border-radius: 10px; padding: 20px;">
+        <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; margin-bottom: 12px; color: #818cf8;">Personal &amp; Contact Info</h4>
+        <p style="font-size: 13.5px; margin-bottom: 8px;"><b>Name:</b> {{ profile.name }}</p>
+        <p style="font-size: 13.5px; margin-bottom: 8px;"><b>Status Chip:</b> {{ profile.status_chip }}</p>
+        <p style="font-size: 13.5px; margin-bottom: 8px;"><b>Email:</b> {{ profile.email }}</p>
+        <p style="font-size: 13.5px; margin-bottom: 8px;"><b>LinkedIn:</b> <a href="{{ profile.linkedin_url }}" target="_blank" style="color: #38bdf8;">{{ profile.linkedin_url }}</a></p>
+        <p style="font-size: 13.5px; margin-bottom: 8px;"><b>GitHub:</b> <a href="{{ profile.github_url }}" target="_blank" style="color: #38bdf8;">{{ profile.github_url }}</a></p>
+        <div style="margin-top: 14px;">
+          <a class="btn-secondary" style="font-size: 12px; padding: 5px 12px;" href="{% url 'dashboard_home_hero' %}">Edit Hero &amp; Contact &rarr;</a>
+        </div>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--dash-border); border-radius: 10px; padding: 20px;">
+        <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 15px; margin-bottom: 12px; color: #34d399;">About Me &amp; Biography</h4>
+        <p style="font-size: 13px; color: var(--dash-muted); margin-bottom: 8px;"><b>Pull Quote:</b></p>
+        <p style="font-size: 13px; font-style: italic; color: #cbd5e1; margin-bottom: 12px;">"{{ profile.about_pull_quote }}"</p>
+        <p style="font-size: 13px; color: var(--dash-muted); margin-bottom: 4px;"><b>Paragraph 1:</b></p>
+        <p style="font-size: 12.5px; color: #94a3b8; margin-bottom: 12px;">{{ profile.about_p1|truncatewords:20 }}</p>
+        <div style="margin-top: 14px;">
+          <a class="btn-secondary" style="font-size: 12px; padding: 5px 12px;" href="{% url 'dashboard_about_me' %}">Edit About Me Bio &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(tabId) {
+    // Hide all panels
+    document.querySelectorAll('.tab-panel').forEach(function(panel) {
+      panel.classList.remove('is-active');
+    });
+    // Remove active from all buttons
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.classList.remove('is-active');
+    });
+
+    // Show target panel
+    var targetPanel = document.getElementById(tabId);
+    if (targetPanel) {
+      targetPanel.classList.add('is-active');
+    }
+
+    // Activate button
+    var targetBtn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+    if (targetBtn) {
+      targetBtn.classList.add('is-active');
+    }
+
+    // Save active tab
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, null, '#' + tabId);
+    }
+  }
+
+  // Bind click handlers to tab buttons
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.getAttribute('data-tab');
+      switchTab(tabId);
+    });
+  });
+
+  // Check URL hash on load
+  window.addEventListener('DOMContentLoaded', function() {
+    var hash = window.location.hash.replace('#', '');
+    if (hash && document.getElementById(hash)) {
+      switchTab(hash);
+    }
+  });
+</script>
+{% endblock %}

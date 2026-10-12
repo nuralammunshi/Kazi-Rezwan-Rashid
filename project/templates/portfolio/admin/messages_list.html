@@ -1,0 +1,68 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}Visitor Inquiries — Portfolio Hub{% endblock %}
+
+{% block content %}
+<div class="card-header">
+  <div>
+    <h1 class="card-title" style="font-size: 22px;">Visitor Inquiries &amp; Messages</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">Messages sent through the contact form on your website.</p>
+  </div>
+</div>
+
+<div class="content-card" style="padding: 0; overflow: hidden;">
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th style="width: 180px;">Sender</th>
+        <th style="width: 180px;">Subject</th>
+        <th>Message</th>
+        <th style="width: 130px;">Received</th>
+        <th style="width: 80px;">Status</th>
+        <th style="text-align: right; padding-right: 20px; width: 140px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr style="{% if not item.is_read %}background: rgba(99, 102, 241, 0.05);{% endif %}">
+          <td>
+            <div style="font-weight: 700; color: #fff;">{{ item.name }}</div>
+            <a href="mailto:{{ item.email }}" style="font-size: 12px; color: #818cf8; text-decoration: none;">{{ item.email }}</a>
+          </td>
+          <td>
+            <b style="color: #e2e8f0; font-size: 13px;">{{ item.subject|default:"(No Subject)" }}</b>
+          </td>
+          <td>
+            <div style="color: #cbd5e1; font-size: 13px; line-height: 1.5; white-space: pre-wrap;">{{ item.message }}</div>
+          </td>
+          <td>
+            <div style="font-size: 12px; color: #94a3b8;">{{ item.created_at|date:"M d, Y" }}</div>
+            <div style="font-size: 11px; color: #64748b;">{{ item.created_at|date:"H:i" }}</div>
+          </td>
+          <td>
+            {% if item.is_read %}
+              <span style="color: #64748b; font-size: 11.5px;">Read</span>
+            {% else %}
+              <span style="background: #ef4444; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700;">NEW</span>
+            {% endif %}
+          </td>
+          <td style="text-align: right; padding-right: 20px;">
+            <div class="table-actions" style="justify-content: flex-end;">
+              <a class="btn-secondary" style="padding: 4px 8px; font-size: 11.5px;" href="{% url 'dashboard_message_toggle_read' item.pk %}">
+                {% if item.is_read %}Mark Unread{% else %}Mark Read{% endif %}
+              </a>
+              <a class="btn-danger" href="{% url 'dashboard_message_delete' item.pk %}">Delete</a>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;">
+            No messages received yet.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}Key Statistics — Portfolio Hub{% endblock %}
+
+{% block content %}
+<div class="card-header">
+  <div>
+    <h1 class="card-title" style="font-size: 22px;">Key Statistics</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">Metric numbers and labels displayed prominently on the hero section.</p>
+  </div>
+  <a class="btn-primary" href="{% url 'dashboard_stat_add' %}">
+    <span class="lnr lnr-plus-circle"></span> Add New Statistic
+  </a>
+</div>
+
+<div class="content-card" style="padding: 0; overflow: hidden;">
+  <table class="dash-table">
+    <thead>
+      <tr>
+        <th style="width: 80px;">Order</th>
+        <th>Number / Metric</th>
+        <th>Label / Description</th>
+        <th style="text-align: right; padding-right: 20px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td><span style="font-weight: 700; color: #818cf8;">#{{ item.order }}</span></td>
+          <td><b style="font-size: 16px; color: #fff;">{{ item.number }}</b></td>
+          <td><span style="color: #cbd5e1;">{{ item.label }}</span></td>
+          <td style="text-align: right; padding-right: 20px;">
+            <div class="table-actions" style="justify-content: flex-end;">
+              <a class="btn-secondary" style="padding: 5px 12px; font-size: 12px;" href="{% url 'dashboard_stat_edit' item.pk %}">Edit</a>
+              <a class="btn-danger" href="{% url 'dashboard_stat_delete' item.pk %}">Delete</a>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 30px; color: #94a3b8;">
+            No statistics configured.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

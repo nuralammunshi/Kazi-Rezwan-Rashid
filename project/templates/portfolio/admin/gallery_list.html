@@ -1,0 +1,84 @@
+{% extends 'portfolio/admin/dashboard_base.html' %}
+
+{% block title %}Companion Gallery (Huck) — Portfolio Hub{% endblock %}
+
+{% block content %}
+<style>
+  .gallery-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .photo-card {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .photo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
+  .photo-card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-card-body {
+    padding: 12px;
+  }
+  .photo-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .photo-card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--dash-border);
+  }
+</style>
+
+<div class="card-header">
+  <div>
+    <h1 class="card-title" style="font-size: 22px;">Companion Gallery (Huck)</h1>
+    <p style="color: var(--dash-muted); font-size: 13.5px; margin-top: 4px;">Upload, preview, and organize gallery photos.</p>
+  </div>
+  <a class="btn-primary" href="{% url 'dashboard_gallery_add' %}">
+    <span class="lnr lnr-upload"></span> Upload New Photo
+  </a>
+</div>
+
+<div class="gallery-admin-grid">
+  {% for item in items %}
+    <div class="photo-card">
+      {% if item.image %}
+        <img class="photo-card-img" src="{{ item.image.url }}" alt="{{ item.alt_text }}">
+      {% endif %}
+      <div class="photo-card-body">
+        <div class="photo-card-title">{{ item.title }}</div>
+        <div style="font-size: 11.5px; color: #94a3b8; margin-top: 2px;">Order: #{{ item.order }}</div>
+        
+        <div class="photo-card-actions">
+          <span style="font-size: 11px; color: #64748b;">{{ item.caption|default:"No caption"|truncatechars:18 }}</span>
+          <a class="btn-danger" href="{% url 'dashboard_gallery_delete' item.pk %}">Delete</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="content-card" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #94a3b8;">
+      No gallery photos uploaded yet. Click "Upload New Photo" to add images.
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
