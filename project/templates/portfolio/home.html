@@ -7,9 +7,9 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero grid-bg">
-  <canvas id="heroNeuralCanvas" class="hero-canvas" aria-hidden="true"></canvas>
-  <div class="wrap">
+<section class="hero grid-bg" style="position: relative; overflow: hidden;">
+  <canvas id="heroNeuralCanvas" class="hero-canvas" style="position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; pointer-events: none !important; z-index: 0 !important; display: block;" aria-hidden="true"></canvas>
+  <div class="wrap" style="position: relative; z-index: 2;">
     <div class="hero-origin-flow">
       <span class="hero-origin-anchor" aria-hidden="true"></span>
       {% if profile.avatar %}

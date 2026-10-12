@@ -22,8 +22,8 @@
   <!-- Core CSS -->
   <link rel="stylesheet" href="{% static 'css/linearicons.css' %}">
   <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/chrome.css' %}">
-  <link rel="stylesheet" href="{% static 'css/site.css' %}?v=20260923_original_restored_clean">
+  <link rel="stylesheet" href="{% static 'css/chrome.css' %}?v=20261012_v3">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}?v=20261012_v3">
 
   <style>
     /* Contact Modal & UI Polish */
@@ -76,7 +76,7 @@
   {% block extra_head %}{% endblock %}
 </head>
 
-<body class="{% block body_class %}page-home{% endblock %}">
+<body class="{% block body_class %}page-home{% endblock %}" oncontextmenu="return false;" ondragstart="return false;">
 
   <!-- Global Scroll Progress Indicator -->
   <div class="scroll-progress-bar" id="scrollProgressBar" aria-hidden="true"></div>
@@ -239,7 +239,7 @@
   </button>
 
   <!-- Scripts -->
-  <script src="{% static 'js/site.js' %}"></script>
+  <script src="{% static 'js/site.js' %}?v=20261012_v3"></script>
   <script>
     // Contact Modal Toggle
     (function() {

@@ -276,9 +276,18 @@
     var time = 0;
 
     function resize() {
-      var hero = canvas.closest('.hero') || canvas.parentElement;
-      width = hero ? hero.offsetWidth : window.innerWidth;
-      height = hero ? hero.offsetHeight : 720;
+      var hero = canvas.closest('.hero');
+      var wrap = hero ? hero.querySelector('.wrap') : null;
+      width = hero ? hero.clientWidth : window.innerWidth;
+      height = wrap ? Math.max(wrap.offsetHeight + 60, 520) : (hero ? hero.clientHeight : 520);
+      canvas.style.position = 'absolute';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      canvas.style.pointerEvents = 'none';
+      canvas.style.zIndex = '0';
+      canvas.style.display = 'block';
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = width * dpr;
       canvas.height = height * dpr;
@@ -650,6 +659,119 @@
     check();
   }
 
+  /*--------------------  High Security & Anti-Copy Protection Suite  --------------------*/
+  function armSecurity() {
+    var toastTimeout = null;
+
+    function showSecurityAlert(msg) {
+      var toast = document.getElementById('securityNoticeToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'securityNoticeToast';
+        toast.className = 'security-toast';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = '<span class="lnr lnr-lock" style="color:#818cf8; font-size:16px;"></span> <span>' + msg + '</span>';
+      toast.classList.add('is-active');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(function () {
+        toast.classList.remove('is-active');
+      }, 2000);
+    }
+
+    // 1. Prevent Right-Click Context Menu
+    document.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+      showSecurityAlert('Right-click is protected.');
+      return false;
+    });
+
+    // 2. Prevent Copy & Cut
+    document.addEventListener('copy', function (e) {
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        showSecurityAlert('Content copying is disabled.');
+        return false;
+      }
+    });
+
+    document.addEventListener('cut', function (e) {
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // 3. Prevent Dragging Images / Media
+    document.addEventListener('dragstart', function (e) {
+      if (e.target.nodeName === 'IMG' || e.target.nodeName === 'A') {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // 4. Prevent DevTools & Source Inspect Shortcuts
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        showSecurityAlert('Developer tools are protected.');
+        return false;
+      }
+
+      var ctrlOrMeta = e.ctrlKey || e.metaKey;
+      if (ctrlOrMeta) {
+        var k = e.key ? e.key.toLowerCase() : '';
+        var code = e.keyCode || e.which;
+
+        // Ctrl+U (View Source)
+        if (k === 'u' || code === 85) {
+          e.preventDefault();
+          showSecurityAlert('Source view is disabled.');
+          return false;
+        }
+
+        // Ctrl+S (Save Page)
+        if (k === 's' || code === 83) {
+          e.preventDefault();
+          showSecurityAlert('Page saving is disabled.');
+          return false;
+        }
+
+        // Ctrl+P (Print Page)
+        if (k === 'p' || code === 80) {
+          e.preventDefault();
+          showSecurityAlert('Printing is disabled.');
+          return false;
+        }
+
+        // Ctrl+Shift+I, J, C (DevTools & Console)
+        if (e.shiftKey && (k === 'i' || k === 'j' || k === 'c' || code === 73 || code === 74 || code === 67)) {
+          e.preventDefault();
+          showSecurityAlert('Inspection tools are protected.');
+          return false;
+        }
+
+        // Ctrl+C (Copy)
+        if (k === 'c' || code === 67) {
+          if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            showSecurityAlert('Content copying is disabled.');
+            return false;
+          }
+        }
+      }
+    });
+
+    // 5. Console Protection Notice
+    try {
+      console.log(
+        '%c🔒 Protected Portfolio %c\nUnauthorized downloading, scraping or copying of code & media is strictly prohibited.',
+        'color:#4f46e5; font-size:18px; font-weight:bold; background:#e0e7ff; padding:4px 10px; border-radius:6px;',
+        'color:#64748b; font-size:12px; margin-top:4px;'
+      );
+    } catch (err) {}
+  }
+
   function init() {
     if (!reduced) {
       document.documentElement.classList.add('js-reveal');
@@ -668,6 +790,7 @@
     armCopyButtons();
     armCardSpotlight();
     armStatCounters();
+    armSecurity();
   }
 
   if (document.readyState === 'loading') {
