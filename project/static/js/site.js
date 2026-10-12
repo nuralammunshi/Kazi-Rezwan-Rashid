@@ -269,6 +269,7 @@
     var width = 0;
     var height = 0;
     var particles = [];
+    var ripples = [];
     var particleCount = 48;
     var mouse = { x: -1000, y: -1000, active: false };
     var animFrame = null;
@@ -408,6 +409,36 @@
         ctx.fill();
       }
 
+      // Draw and expand interactive click ripples
+      for (var rIdx = ripples.length - 1; rIdx >= 0; rIdx--) {
+        var rip = ripples[rIdx];
+        rip.r += 4.5;
+        rip.alpha *= 0.95;
+
+        ctx.beginPath();
+        ctx.arc(rip.x, rip.y, rip.r, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(124, 58, 237, ' + rip.alpha + ')';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+
+        // Push nearby particles with ripple shockwave
+        for (var pIdx = 0; pIdx < particles.length; pIdx++) {
+          var part = particles[pIdx];
+          var rx = part.x - rip.x;
+          var ry = part.y - rip.y;
+          var rdist = Math.sqrt(rx * rx + ry * ry);
+          if (Math.abs(rdist - rip.r) < 32 && rdist > 0) {
+            var push = (1 - Math.abs(rdist - rip.r) / 32) * 2.8;
+            part.x += (rx / rdist) * push;
+            part.y += (ry / rdist) * push;
+          }
+        }
+
+        if (rip.alpha < 0.03 || rip.r > rip.maxR) {
+          ripples.splice(rIdx, 1);
+        }
+      }
+
       animFrame = requestAnimationFrame(draw);
     }
 
@@ -421,6 +452,16 @@
       });
       heroEl.addEventListener('mouseleave', function () {
         mouse.active = false;
+      });
+      heroEl.addEventListener('click', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        ripples.push({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+          r: 6,
+          maxR: 240,
+          alpha: 0.85
+        });
       });
     }
 
@@ -772,6 +813,43 @@
     } catch (err) {}
   }
 
+  /*--------------------  Interactive Cyber Glow Cursor Follower  --------------------*/
+  function armCursorGlow() {
+    if (reduced || window.innerWidth < 768) return;
+
+    var orb = document.createElement('div');
+    orb.className = 'cyber-cursor-glow';
+    document.body.appendChild(orb);
+
+    var posX = window.innerWidth / 2;
+    var posY = window.innerHeight / 2;
+    var mouseX = posX;
+    var mouseY = posY;
+
+    window.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    var interactives = document.querySelectorAll('a, button, .skill-card, .ref-card, .grid-six > div, .row-link, .hero-avatar');
+    interactives.forEach(function (el) {
+      el.addEventListener('mouseenter', function () {
+        orb.classList.add('is-hovering');
+      });
+      el.addEventListener('mouseleave', function () {
+        orb.classList.remove('is-hovering');
+      });
+    });
+
+    function update() {
+      posX += (mouseX - posX) * 0.14;
+      posY += (mouseY - posY) * 0.14;
+      orb.style.transform = 'translate3d(' + (posX - 180) + 'px, ' + (posY - 180) + 'px, 0)';
+      requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
   function init() {
     if (!reduced) {
       document.documentElement.classList.add('js-reveal');
@@ -791,6 +869,7 @@
     armCardSpotlight();
     armStatCounters();
     armSecurity();
+    armCursorGlow();
   }
 
   if (document.readyState === 'loading') {
