@@ -14,6 +14,14 @@
   <meta name="description" content="{% block meta_description %}{{ profile.name }} — {{ profile.status_chip }}. Production AI systems and applied ML.{% endblock %}">
   <title>{% block title %}{{ profile.name }} — {{ profile.brand_kicker }}{% endblock %}</title>
 
+  <!-- Open Graph & Social Preview Thumbnail -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ profile.name }} — {{ profile.brand_kicker }}">
+  <meta property="og:description" content="{{ profile.name }} — {{ profile.status_chip }}. Production AI systems and Computer Vision.">
+  <meta property="og:image" content="{% static 'img/main_thumbnail.jpg' %}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{% static 'img/main_thumbnail.jpg' %}">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
