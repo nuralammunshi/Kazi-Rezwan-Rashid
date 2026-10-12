@@ -84,6 +84,14 @@
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       toggle.querySelector('span').className = open ? 'lnr lnr-cross' : 'lnr lnr-menu';
     });
+    nav.querySelectorAll('a, button').forEach(function (el) {
+      el.addEventListener('click', function () {
+        if (window.innerWidth <= 860) close();
+      });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) close();
+    });
     document.addEventListener('click', function (e) {
       if (!nav.classList.contains('is-open')) return;
       if (nav.contains(e.target) || toggle.contains(e.target)) return;
@@ -444,10 +452,10 @@
     draw();
   }
 
-  /*--------------------  Hero 3D Card Interactive Tilt  --------------------*/
+  /*--------------------  Hero & Interactive 3D Card Tilt  --------------------*/
   function armHeroCards() {
     if (reduced) return;
-    var cards = document.querySelectorAll('.architecture-card, .arch-model-box');
+    var cards = document.querySelectorAll('.skill-card, .grid-six > div, .ref-card, .ref-card-pro, .arch-terminal-card, .metric-strip > div');
     if (!cards.length) return;
 
     cards.forEach(function (card) {
@@ -457,9 +465,9 @@
         var y = e.clientY - rect.top;
         var centerX = rect.width / 2;
         var centerY = rect.height / 2;
-        var rotateX = ((y - centerY) / centerY) * -4;
-        var rotateY = ((x - centerX) / centerX) * 4;
-        card.style.transform = 'perspective(900px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) translateY(-5px)';
+        var rotateX = ((y - centerY) / centerY) * -4.5;
+        var rotateY = ((x - centerX) / centerX) * 4.5;
+        card.style.transform = 'perspective(900px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) translateY(-4px)';
       });
 
       card.addEventListener('mouseleave', function () {
@@ -517,7 +525,7 @@
 
   /*--------------------  Interactive Card Spotlight (Linear/Stripe style)  --------------------*/
   function armCardSpotlight() {
-    var cards = document.querySelectorAll('.ref-card-pro');
+    var cards = document.querySelectorAll('.ref-card, .ref-card-pro, .skill-card, .grid-six > div, .browser, .metric-strip > div, .row-link');
     if (!cards.length) return;
 
     cards.forEach(function (card) {
@@ -533,6 +541,55 @@
         card.style.removeProperty('--mouse-y');
       });
     });
+  }
+
+  /*--------------------  Animated Dynamic Stat Counters  --------------------*/
+  function armStatCounters() {
+    var statNums = document.querySelectorAll('.stat-num');
+    if (!statNums.length || reduced) return;
+
+    var triggered = false;
+
+    function countUp(el) {
+      var raw = el.textContent.trim();
+      var match = raw.match(/^(\d+)(\+?)$/);
+      if (!match) return;
+
+      var target = parseInt(match[1], 10);
+      var suffix = match[2] || '';
+      var duration = 1500;
+      var startTime = null;
+
+      function step(now) {
+        if (!startTime) startTime = now;
+        var progress = Math.min((now - startTime) / duration, 1);
+        var ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        var current = Math.floor(ease * target);
+        el.textContent = current + suffix;
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          el.textContent = raw;
+        }
+      }
+      requestAnimationFrame(step);
+    }
+
+    function check() {
+      if (triggered) return;
+      var statsWrap = document.querySelector('.stats');
+      if (!statsWrap) return;
+      var rect = statsWrap.getBoundingClientRect();
+      var vh = window.innerHeight || 800;
+      if (rect.top < vh * 0.95 && rect.bottom > 0) {
+        triggered = true;
+        statNums.forEach(countUp);
+        window.removeEventListener('scroll', check);
+      }
+    }
+
+    window.addEventListener('scroll', check, { passive: true });
+    check();
   }
 
   /*--------------------  Scroll Progress Indicator  --------------------*/
@@ -610,6 +667,7 @@
     armLightbox();
     armCopyButtons();
     armCardSpotlight();
+    armStatCounters();
   }
 
   if (document.readyState === 'loading') {

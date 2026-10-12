@@ -35,9 +35,14 @@
     .contact-modal-overlay[hidden] { display: none !important; }
     .contact-card {
       background: #ffffff; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto;
       border-radius: 18px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       border: 1px solid rgba(99, 102, 241, 0.2); position: relative;
       animation: modal-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @media (max-width: 480px) {
+      .contact-card { padding: 24px 18px; border-radius: 14px; }
+      .contact-modal-overlay { padding: 12px; }
     }
     @keyframes modal-enter {
       from { opacity: 0; transform: scale(0.92) translateY(20px); }
@@ -260,6 +265,9 @@
           if (e.target === modal) closeModal();
         });
       }
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
+      });
     })();
   </script>
   {% block extra_js %}{% endblock %}
