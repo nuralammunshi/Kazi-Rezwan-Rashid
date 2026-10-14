@@ -200,13 +200,19 @@ def project_detail_view(request, slug):
 
 
 def gallery_view(request):
-    """Redirect public gallery link to the home page gallery section."""
-    return redirect('/#gallery')
+    """Dedicated Photo Gallery page showcasing moments and milestones."""
+    profile = get_profile()
+    gallery_items = GalleryItem.objects.all().order_by('order', 'id')
+    context = {
+        'profile': profile,
+        'gallery_items': gallery_items,
+    }
+    return render(request, 'portfolio/gallery.html', context)
 
 
 def huck_view(request):
-    """Legacy route redirecting to the home page gallery section."""
-    return redirect('/#gallery')
+    """Legacy route redirecting to the dedicated gallery page."""
+    return redirect('gallery')
 
 
 def contact_submit_view(request):

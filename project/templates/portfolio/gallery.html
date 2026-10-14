@@ -1,0 +1,150 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}Photo Gallery — {{ profile.name }}{% endblock %}
+
+{% block body_class %}page-gallery{% endblock %}
+
+{% block content %}
+<style>
+  .page-gallery .home-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .page-gallery .gallery-card {
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #111827;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+  .page-gallery .gallery-card:hover {
+    transform: translateY(-6px) scale(1.015);
+    box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.35);
+    border-color: rgba(99, 102, 241, 0.5);
+    z-index: 2;
+  }
+  .page-gallery .gallery-card-inner {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .page-gallery .gallery-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .page-gallery .gallery-card:hover .gallery-thumb {
+    transform: scale(1.08);
+  }
+  .page-gallery .gallery-hover-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(7, 10, 18, 0.95) 0%, rgba(7, 10, 18, 0.5) 45%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px;
+    pointer-events: none;
+  }
+  .page-gallery .gallery-card:hover .gallery-hover-overlay {
+    opacity: 1;
+  }
+  .page-gallery .gallery-zoom-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  @media (max-width: 640px) {
+    .page-gallery .home-gallery-grid {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+  }
+</style>
+
+<!-- Page Head -->
+<section class="grid-bg">
+  <div class="wrap page-head">
+    <div class="kicker" data-reveal="left" style="display: inline-flex; align-items: center; gap: 6px;">
+      <span class="lnr lnr-picture"></span> <span data-trans="Moments & Highlights">Moments &amp; Highlights</span>
+    </div>
+    <h1 class="hero-h1" data-reveal="right" data-trans="Photo Gallery">Photo Gallery</h1>
+    <p data-reveal="bottom-left" data-trans="A visual journey behind the research, conferences, university life, milestones, and memorable captures.">
+      A visual journey behind the research, conferences, university life, milestones, and memorable captures.
+    </p>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-top: 24px;">
+      <span class="pill pill--lg" style="font-family: var(--mono);">
+        {{ gallery_items|length }} <span data-trans="photos · tap to view">photos · tap to view</span>
+      </span>
+      {% if user.is_authenticated and user.is_staff %}
+        <a class="btn btn--ghost btn--sm" href="{% url 'dashboard_gallery' %}" style="font-size: 13px; padding: 6px 14px;">
+          <span class="lnr lnr-cog"></span> <span data-trans="Manage Gallery">Manage Gallery</span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Gallery Grid Section -->
+<section class="gallery-body pad-gallery" style="padding-top: 50px; padding-bottom: 90px;">
+  <div class="wrap">
+    <div class="home-gallery-grid" data-stagger-grid>
+      {% for item in gallery_items %}
+        <div class="gallery-card" data-reveal="{% cycle 'up' 'left' 'right' 'zoom' %}">
+          <div class="gallery-card-inner">
+            {% if item.image %}
+              <img class="gallery-thumb" data-photo src="{{ item.image.url }}" alt="{{ item.alt_text|default:item.title }}" loading="lazy">
+            {% else %}
+              <img class="gallery-thumb" data-photo src="{% static 'img/crop.jpg' %}" alt="{{ item.title }}" loading="lazy">
+            {% endif %}
+            <div class="gallery-hover-overlay">
+              <span class="gallery-zoom-badge" aria-hidden="true">
+                <span class="lnr lnr-magnifier"></span>
+              </span>
+              <h4 style="color: #fff; font-size: 1.05rem; font-weight: 700; margin: 0 0 4px; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">{{ item.title }}</h4>
+              {% if item.caption %}
+                <p style="color: #cbd5e1; font-size: 0.85rem; margin: 0; line-height: 1.45; text-shadow: 0 1px 3px rgba(0,0,0,0.6);">{{ item.caption }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="content-card" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--muted); border-radius: 16px; border: 1px dashed var(--line);">
+          <span class="lnr lnr-picture" style="font-size: 40px; display: block; margin-bottom: 12px; color: var(--dash-primary);"></span>
+          <p style="font-size: 1rem; margin-bottom: 8px; color: var(--ink);">Gallery photos will be showcased here.</p>
+          <p style="font-size: 0.9rem; margin: 0;">Login to the dashboard to upload and curate gallery images.</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Return to Home Link -->
+    <div style="text-align: center; margin-top: 50px;">
+      <a class="btn btn--ghost" href="{% url 'home' %}#gallery">
+        &larr; <span data-trans="Home">Return to Home</span>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

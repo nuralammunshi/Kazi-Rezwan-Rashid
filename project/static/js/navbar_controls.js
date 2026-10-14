@@ -160,6 +160,8 @@
     "A visual journey behind the research, conferences, university life, milestones, and memorable captures.":
       "গবেষণা, কনফারেন্স, বিশ্ববিদ্যালয় জীবন এবং স্মরণীয় অর্জনের একটি ছবির কোলাজ।",
     "photos · tap to view": "টি ছবি · বড় করে দেখতে চাপুন",
+    "Return to Home": "মূল পাতায় ফিরুন",
+    "Return to Public Website": "মূল ওয়েবসাইটে ফিরুন",
     "Professional Portrait": "প্রফেশনাল পোর্ট্রেট",
     "Kazi Rezwan Rashid — Machine Learning Engineer & Data Science Researcher.":
       "কাজী রেজওয়ান রশীদ — মেশিন লার্নিং ইঞ্জিনিয়ার ও ডেটা সায়েন্স গবেষক।",
@@ -368,28 +370,19 @@
     }
   }
 
-  function triggerGoogleTranslate(targetLang) {
+  function clearGoogleTranslateArtifacts() {
     var host = window.location.hostname;
-    if (targetLang === 'bn') {
-      document.cookie = "googtrans=/en/bn; path=/";
-      if (host) {
-        document.cookie = "googtrans=/en/bn; path=/; domain=" + host;
-        document.cookie = "googtrans=/en/bn; path=/; domain=." + host;
-      }
-    } else {
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      document.cookie = "googtrans=/en/en; path=/";
-      if (host) {
-        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + host;
-        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + host;
-      }
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    if (host) {
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + host;
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + host;
     }
-
-    var combo = document.querySelector('.goog-te-combo');
-    if (combo) {
-      combo.value = targetLang;
-      combo.dispatchEvent(new Event('change'));
-    }
+    var banner = document.querySelector('.goog-te-banner-frame');
+    if (banner) banner.remove();
+    var tooltip = document.getElementById('goog-gt-tt');
+    if (tooltip) tooltip.remove();
+    var balloon = document.querySelector('.goog-te-balloon-frame');
+    if (balloon) balloon.remove();
   }
 
   function applyLanguage(lang) {
@@ -409,13 +402,14 @@
       }
     }
 
+    // Clean up any external Google Translate tooltips or bars
+    clearGoogleTranslateArtifacts();
+
     if (lang === 'bn') {
-      // 1. Instant client-side DOM translation
+      // Instant clean client-side translation
       translateNode(document.body);
-      // 2. Google Translate Bridge for full remaining content
-      triggerGoogleTranslate('bn');
     } else {
-      // 1. Revert client-side DOM translation
+      // Revert clean client-side translation back to original English
       for (var i = 0; i < translatedNodes.length; i++) {
         var item = translatedNodes[i];
         if (item.nodeType === Node.TEXT_NODE && item._origText !== undefined) {
@@ -427,8 +421,6 @@
         }
       }
       translatedNodes = [];
-      // 2. Revert Google Translate
-      triggerGoogleTranslate('en');
     }
 
     // Refresh live clock format immediately
