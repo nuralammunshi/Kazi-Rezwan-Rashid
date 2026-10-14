@@ -81,6 +81,13 @@
     .admin-pill-link:hover { background: #6366f1; color: #fff; }
   </style>
 
+  <script>
+    (function() {
+      var t = localStorage.getItem('site_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+      document.documentElement.classList.add(t === 'dark' ? 'theme-dark' : 'theme-light');
+    })();
+  </script>
   {% block extra_head %}{% endblock %}
 </head>
 
@@ -89,45 +96,89 @@
   <!-- Global Scroll Progress Indicator -->
   <div class="scroll-progress-bar" id="scrollProgressBar" aria-hidden="true"></div>
 
-  <!-- Site Header -->
-  <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="{% url 'home' %}">
-        <img src="{% static 'img/favicon.svg' %}" alt="">
-        <span class="brand-lockup">
-          <span class="brand-name">{{ profile.name }}</span>
-          <span class="brand-kicker">{{ profile.brand_kicker }}</span>
-        </span>
-      </a>
+  <!-- Sticky Navigation Wrapper containing Top Utility Bar & Main Navbar -->
+  <div class="sticky-nav-wrapper">
+    <!-- Top Utility Bar: Live Date & Time, Language Switcher, Theme Switcher, Quick Login -->
+    <div class="top-nav-bar" id="topNavBar">
+      <div class="wrap top-nav-wrap">
+        <div class="top-nav-left">
+          <div class="live-clock-badge" id="liveClockBadge" title="Live Local Time">
+            <span class="live-clock-dot" aria-hidden="true"></span>
+            <span class="lnr lnr-clock" style="font-size: 13px;"></span>
+            <span id="liveDateTimeText">Loading live time...</span>
+          </div>
+        </div>
 
-      <button class="nav-toggle" type="button" data-nav-toggle aria-label="Menu" aria-expanded="false">
-        <span class="lnr lnr-menu"></span>
-      </button>
+        <div class="top-nav-right">
+          <!-- Language Switcher: English / Bangla -->
+          <div class="lang-switcher" id="langSwitcher" role="group" aria-label="Language selection">
+            <button type="button" class="lang-btn is-active" data-lang="en" id="langBtnEn" title="English">
+              <span>🇬🇧</span> EN
+            </button>
+            <span class="lang-sep">/</span>
+            <button type="button" class="lang-btn" data-lang="bn" id="langBtnBn" title="বাংলা">
+              <span>🇧🇩</span> বাং
+            </button>
+          </div>
 
-      <nav class="nav" data-nav-list>
-        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}is-current{% endif %}" href="{% url 'home' %}">Home</a>
-        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}is-current{% endif %}" href="{% url 'about' %}">About</a>
-        <a class="nav-link {% if request.resolver_match.url_name == 'projects' or request.resolver_match.url_name == 'project_detail' %}is-current{% endif %}" href="{% url 'projects' %}">Projects</a>
-        <a class="nav-link {% if request.resolver_match.url_name == 'huck' %}is-current{% endif %}" href="{% url 'huck' %}">Huck</a>
-        
-        {% if profile.external_link_url %}
-        <span class="nav-div"></span>
-        <a class="nav-link nav-ext" href="{{ profile.external_link_url }}" target="_blank">{{ profile.external_link_title }}<span class="ext-arrow">&#8599;</span></a>
-        {% endif %}
-
-        <a class="nav-resume" href="{% url 'resume_pdf_direct' %}" target="_blank" id="navResumeBtn">R&eacute;sum&eacute;</a>
-
-        <button type="button" class="btn btn--ghost btn--sm" data-contact-open style="margin-left: 8px; padding: 6px 14px; font-size: 13px;">Contact</button>
-
-        {% if user.is_authenticated and user.is_staff %}
-        <a class="btn btn--grad btn--sm" href="{% url 'dashboard_home' %}" style="margin-left: 8px; padding: 6px 14px; font-size: 13px; text-decoration: none;">
-          <span class="lnr lnr-screen" style="margin-right: 4px;"></span>Dashboard
-        </a>
-        {% endif %}
-      </nav>
+          <!-- Theme Switcher: Dark Mode / White Mode -->
+          <div class="theme-switcher" id="themeSwitcher" role="group" aria-label="Theme selection">
+            <button type="button" class="theme-btn" data-theme-val="light" id="themeBtnLight" title="White / Light Mode">
+              <span class="theme-icon">&#9728;&#65039;</span>
+              <span class="theme-label" data-trans="White">White</span>
+            </button>
+            <button type="button" class="theme-btn is-active" data-theme-val="dark" id="themeBtnDark" title="Dark Mode">
+              <span class="theme-icon">&#127769;</span>
+              <span class="theme-label" data-trans="Dark">Dark</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="header-strip"></div>
-  </header>
+
+    <!-- Site Header -->
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="{% url 'home' %}">
+          <img src="{% static 'img/favicon.svg' %}" alt="">
+          <span class="brand-lockup">
+            <span class="brand-name">{{ profile.name }}</span>
+            <span class="brand-kicker">{{ profile.brand_kicker }}</span>
+          </span>
+        </a>
+
+        <button class="nav-toggle" type="button" data-nav-toggle aria-label="Menu" aria-expanded="false">
+          <span class="lnr lnr-menu"></span>
+        </button>
+
+        <nav class="nav" data-nav-list>
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}is-current{% endif %}" href="{% url 'home' %}">Home</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'about' %}is-current{% endif %}" href="{% url 'about' %}">About</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'projects' or request.resolver_match.url_name == 'project_detail' %}is-current{% endif %}" href="{% url 'projects' %}">Projects</a>
+          <a class="nav-link" href="{% url 'home' %}#gallery" id="navGalleryLink">Gallery</a>
+          
+          {% if profile.external_link_url %}
+          <span class="nav-div"></span>
+          <a class="nav-link nav-ext" href="{{ profile.external_link_url }}" target="_blank">{{ profile.external_link_title }}<span class="ext-arrow">&#8599;</span></a>
+          {% endif %}
+
+          <a class="nav-resume" href="{% url 'resume_pdf_direct' %}" target="_blank" id="navResumeBtn">R&eacute;sum&eacute;</a>
+
+          <button type="button" class="btn btn--ghost btn--sm" data-contact-open style="margin-left: 8px; padding: 6px 14px; font-size: 13px;">Contact</button>
+
+          {% if user.is_authenticated and user.is_staff %}
+          <a class="btn btn--grad btn--sm" href="{% url 'dashboard_home' %}" style="margin-left: 8px; padding: 6px 14px; font-size: 13px; text-decoration: none;">
+            <span class="lnr lnr-screen" style="margin-right: 4px;"></span><span data-trans="Dashboard">Dashboard</span>
+          </a>
+          <a class="btn btn--ghost btn--sm" href="{% url 'admin_logout' %}" style="margin-left: 6px; padding: 6px 10px; font-size: 13px; text-decoration: none;" title="Logout">
+            <span class="lnr lnr-exit"></span>
+          </a>
+          {% endif %}
+        </nav>
+      </div>
+      <div class="header-strip"></div>
+    </header>
+  </div>
 
   <!-- Flash Messages -->
   {% if messages %}
@@ -154,11 +205,6 @@
         </div>
         <p>{{ profile.status_chip }}. Open to conversations about generative AI and applied ML.</p>
         <a class="footer-email" href="mailto:{{ profile.email }}">{{ profile.email }}</a>
-        <div style="margin-top: 16px;">
-          <a href="{% url 'dashboard_home' %}" class="admin-pill-link" style="margin-left: 0;">
-            <span class="lnr lnr-cog"></span>Admin Portal
-          </a>
-        </div>
       </div>
 
       <div class="footer-col" data-reveal="zoom">
@@ -167,7 +213,7 @@
           <a class="{% if request.resolver_match.url_name == 'home' %}is-current{% endif %}" href="{% url 'home' %}">Home</a>
           <a class="{% if request.resolver_match.url_name == 'about' %}is-current{% endif %}" href="{% url 'about' %}">About</a>
           <a class="{% if request.resolver_match.url_name == 'projects' or request.resolver_match.url_name == 'project_detail' %}is-current{% endif %}" href="{% url 'projects' %}">Projects</a>
-          <a class="{% if request.resolver_match.url_name == 'huck' %}is-current{% endif %}" href="{% url 'huck' %}">Huck</a>
+          <a href="{% url 'home' %}#gallery">Gallery</a>
           <a href="{% url 'resume_pdf_direct' %}" target="_blank" rel="noopener noreferrer">R&eacute;sum&eacute; <span class="ext-arrow">&#8599;</span></a>
         </div>
       </div>
@@ -246,8 +292,19 @@
     <span class="lnr lnr-chevron-up"></span>
   </button>
 
+  <!-- Lightbox Overlay -->
+  <div class="overlay lightbox-overlay" data-lightbox hidden>
+    <button class="lightbox-close" type="button" data-lightbox-close aria-label="Close">&times;</button>
+    <button class="lightbox-prev" type="button" data-lightbox-step="-1" aria-label="Previous">&lsaquo;</button>
+    <div class="lightbox-stage">
+      <img src="" alt="Enlarged photo">
+    </div>
+    <button class="lightbox-next" type="button" data-lightbox-step="1" aria-label="Next">&rsaquo;</button>
+  </div>
+
   <!-- Scripts -->
   <script src="{% static 'js/site.js' %}?v=20261012_v3"></script>
+  <script src="{% static 'js/navbar_controls.js' %}?v=20261014_v1"></script>
   <script>
     // Contact Modal Toggle
     (function() {

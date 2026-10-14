@@ -22,21 +22,26 @@ routes = [
     ('/', 'Home Page'),
     ('/about/', 'About Page'),
     ('/projects/', 'Projects Page'),
-    ('/huck/', 'Huck Gallery Page'),
+    ('/gallery/', 'Gallery Public Route'),
+    ('/huck/', 'Legacy Huck Route'),
 ]
 
 for p in Project.objects.all()[:4]:
     routes.append((f'/projects/{p.slug}/', f'Case Study: {p.title}'))
 
 for url, name in routes:
-    res = client.get(url)
+    res = client.get(url, follow=True)
     assert res.status_code == 200, f"Failed {name} at {url}: {res.status_code}"
     print(f"[OK] {name} ({url}) -> Status {res.status_code}")
 
-print("\n--- Testing Section 03: Skills & Tooling on Home Page ---")
+print("\n--- Testing Gallery Section on Home Page ---")
 home_res = client.get('/')
 assert home_res.status_code == 200
 home_html = home_res.content.decode('utf-8')
+assert 'id="gallery"' in home_html, "Gallery section missing id='gallery'"
+print("[OK] Section 06: Photo Gallery section found on Home Page!")
+
+print("\n--- Testing Section 03: Skills & Tooling on Home Page ---")
 assert 'id="skills"' in home_html, "Section 03 missing id='skills'"
 for cat in SkillCategory.objects.all():
     assert cat.title in home_html or cat.title.replace('&', '&amp;') in home_html, f"SkillCategory '{cat.title}' not rendered on home page"

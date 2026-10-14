@@ -36,6 +36,7 @@ def home_view(request):
     if not featured_projects.exists():
         featured_projects = Project.objects.all()[:3]
     home_experiences = Experience.objects.filter(show_on_home=True)
+    gallery_items = GalleryItem.objects.all().order_by('order', 'id')
         
     context = {
         'profile': profile,
@@ -44,6 +45,7 @@ def home_view(request):
         'skill_categories': skill_categories,
         'featured_projects': featured_projects,
         'home_experiences': home_experiences,
+        'gallery_items': gallery_items,
     }
     return render(request, 'portfolio/home.html', context)
 
@@ -197,14 +199,14 @@ def project_detail_view(request, slug):
     return render(request, 'portfolio/project_detail.html', context)
 
 
+def gallery_view(request):
+    """Redirect public gallery link to the home page gallery section."""
+    return redirect('/#gallery')
+
+
 def huck_view(request):
-    profile = get_profile()
-    photos = GalleryItem.objects.all()
-    context = {
-        'profile': profile,
-        'photos': photos,
-    }
-    return render(request, 'portfolio/huck.html', context)
+    """Legacy route redirecting to the home page gallery section."""
+    return redirect('/#gallery')
 
 
 def contact_submit_view(request):
@@ -695,7 +697,7 @@ def dashboard_experience_delete_view(request, pk):
 # Gallery
 @staff_required
 def dashboard_gallery_view(request):
-    items = GalleryItem.objects.all()
+    items = GalleryItem.objects.all().order_by('order', 'id')
     return render(request, 'portfolio/admin/gallery_list.html', {'items': items, 'active_section': 'gallery'})
 
 @staff_required
@@ -709,7 +711,27 @@ def dashboard_gallery_add_view(request):
     else:
         form = GalleryItemForm()
 
-    return render(request, 'portfolio/admin/generic_form.html', {'form': form, 'title': 'Upload Photo', 'active_section': 'gallery'})
+    return render(request, 'portfolio/admin/generic_form.html', {'form': form, 'title': 'Upload Photo', 'active_section': 'gallery', 'back_url': 'dashboard_gallery'})
+
+@staff_required
+def dashboard_gallery_edit_view(request, pk):
+    item = get_object_or_404(GalleryItem, pk=pk)
+    if request.method == 'POST':
+        form = GalleryItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Gallery photo '{item.title}' updated successfully!")
+            return redirect('dashboard_gallery')
+    else:
+        form = GalleryItemForm(instance=item)
+
+    return render(request, 'portfolio/admin/generic_form.html', {
+        'form': form,
+        'instance': item,
+        'title': f'Edit Photo: {item.title}',
+        'active_section': 'gallery',
+        'back_url': 'dashboard_gallery'
+    })
 
 @staff_required
 def dashboard_gallery_delete_view(request, pk):

@@ -7,6 +7,7 @@ urlpatterns = [
     path('about/', views.about_view, name='about'),
     path('projects/', views.projects_view, name='projects'),
     path('projects/<slug:slug>/', views.project_detail_view, name='project_detail'),
+    path('gallery/', views.gallery_view, name='gallery'),
     path('huck/', views.huck_view, name='huck'),
     path('resume/', views.resume_view, name='resume'),
     path('resume/view/', views.resume_interactive_view, name='resume_interactive'),
@@ -94,6 +95,7 @@ urlpatterns = [
     # Gallery CRUD
     path('dashboard/gallery/', views.dashboard_gallery_view, name='dashboard_gallery'),
     path('dashboard/gallery/add/', views.dashboard_gallery_add_view, name='dashboard_gallery_add'),
+    path('dashboard/gallery/<int:pk>/edit/', views.dashboard_gallery_edit_view, name='dashboard_gallery_edit'),
     path('dashboard/gallery/<int:pk>/delete/', views.dashboard_gallery_delete_view, name='dashboard_gallery_delete'),
 
     # Messages

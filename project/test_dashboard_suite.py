@@ -166,6 +166,46 @@ assert del_res.status_code == 302, f"Project delete failed: {del_res.status_code
 assert not Project.objects.filter(slug='automated-test-project').exists(), "Project still exists after deletion"
 print(f"[OK] Project DELETE succeeded: Project cleanly removed from database")
 
+print("\n--- 5b. Testing Full Gallery Photo CRUD in Dashboard ---")
+# CREATE Photo
+from django.core.files.uploadedfile import SimpleUploadedFile
+gif_bytes = b'GIF89a\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff\x00\x00\x00!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;'
+test_img = SimpleUploadedFile(name='test_gallery_photo.gif', content=gif_bytes, content_type='image/gif')
+gallery_create = client.post('/dashboard/gallery/add/', {
+    'title': 'Automated Test Photo',
+    'caption': 'Test caption for automated verification',
+    'alt_text': 'Alt text for test photo',
+    'order': 999,
+    'image': test_img,
+})
+assert gallery_create.status_code == 302, f"Gallery create failed: {gallery_create.status_code}"
+test_photo = GalleryItem.objects.filter(title='Automated Test Photo').first()
+assert test_photo is not None, "Created gallery photo not found in DB"
+print(f"[OK] Gallery CREATE succeeded: ID {test_photo.id} - '{test_photo.title}'")
+
+# READ / EDIT PAGE
+photo_edit_get = client.get(f'/dashboard/gallery/{test_photo.id}/edit/')
+assert photo_edit_get.status_code == 200, f"Gallery edit page failed: {photo_edit_get.status_code}"
+print("[OK] Gallery READ/EDIT page rendered: Status 200")
+
+# UPDATE Photo
+photo_update = client.post(f'/dashboard/gallery/{test_photo.id}/edit/', {
+    'title': 'Automated Test Photo (Updated)',
+    'caption': 'Updated caption for verification',
+    'alt_text': 'Updated alt text',
+    'order': 888,
+})
+assert photo_update.status_code == 302, f"Gallery update failed: {photo_update.status_code}"
+test_photo.refresh_from_db()
+assert test_photo.title == 'Automated Test Photo (Updated)' and test_photo.order == 888, "Gallery photo update not persisted"
+print(f"[OK] Gallery UPDATE succeeded: Title '{test_photo.title}', Order #{test_photo.order}")
+
+# DELETE Photo
+photo_del = client.post(f'/dashboard/gallery/{test_photo.id}/delete/')
+assert photo_del.status_code == 302, f"Gallery delete failed: {photo_del.status_code}"
+assert not GalleryItem.objects.filter(id=test_photo.id).exists(), "Gallery photo still exists after delete"
+print("[OK] Gallery DELETE succeeded: Photo cleanly removed from database")
+
 print("\n--- 6. Testing Message Toggle Read Status ---")
 msg = ContactMessage.objects.first()
 if msg:
