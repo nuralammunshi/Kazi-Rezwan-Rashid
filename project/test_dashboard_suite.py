@@ -28,9 +28,9 @@ assert login_page.status_code == 200, f"Login page failed with {login_page.statu
 print("[OK] /login/ page rendered successfully (200 OK)")
 
 print("\n--- 3. Testing Authentication Flow ---")
-login_res = client.post('/login/', {'username': 'admin', 'password': 'admin12345'})
+login_res = client.post('/login/', {'username': 'rezwan', 'password': 'Rezwan**258%%'})
 assert login_res.status_code == 302 and '/dashboard/' in login_res.url, f"Expected redirect to /dashboard/, got {login_res.status_code} ({login_res.url})"
-print("[OK] Admin login successful, redirected to /dashboard/")
+print("[OK] Admin login successful with rezwan, redirected to /dashboard/")
 
 print("\n--- 4. Testing All Dashboard Sections & Grouped Menus ---")
 sections = [

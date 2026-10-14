@@ -63,8 +63,8 @@ assert ContactMessage.objects.filter(email='visitor@example.com').exists(), "Mes
 print(f"[OK] Contact Form submission & DB persistence verified! Total messages: {ContactMessage.objects.count()}")
 
 print("\n--- Testing Admin Authentication & CRUD ---")
-login_success = client.login(username='admin', password='admin12345')
-assert login_success, "Admin login with 'admin' / 'admin12345' failed!"
+login_success = client.login(username='rezwan', password='Rezwan**258%%')
+assert login_success, "Admin login with 'rezwan' failed!"
 print("[OK] Admin login successful!")
 
 admin_urls = [

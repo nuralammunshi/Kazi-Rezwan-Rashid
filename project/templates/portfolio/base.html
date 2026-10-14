@@ -132,6 +132,22 @@
               <span class="theme-label" data-trans="Dark">Dark</span>
             </button>
           </div>
+
+          <!-- Top Navbar Login / Dashboard Option -->
+          {% if user.is_authenticated and user.is_staff %}
+            <a class="top-auth-btn top-auth-dash" href="{% url 'dashboard_home' %}" title="Dashboard" id="topNavDashBtn">
+              <span class="lnr lnr-screen"></span>
+              <span data-trans="Dashboard">Dashboard</span>
+            </a>
+            <a class="top-auth-btn top-auth-logout" href="{% url 'admin_logout' %}" title="Logout" id="topNavLogoutBtn">
+              <span class="lnr lnr-exit"></span>
+            </a>
+          {% else %}
+            <a class="top-auth-btn top-auth-login" href="{% url 'admin_login' %}" title="Login" id="topNavLoginBtn">
+              <span class="lnr lnr-lock"></span>
+              <span data-trans="Login">Login</span>
+            </a>
+          {% endif %}
         </div>
       </div>
     </div>
