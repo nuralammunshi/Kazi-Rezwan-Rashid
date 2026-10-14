@@ -1,17 +1,20 @@
 /**
  * navbar_controls.js
- * Controls Live Date/Time, Full Website Bangla <-> English Translation,
- * Dark Mode <-> White Mode Switcher, and Navbar State.
+ * Comprehensive Controller for:
+ * 1. Live Real-Time Date & Time (EN & BN format)
+ * 2. Full Website Bilingual Translation Engine (English <-> Bangla) + Google Translate Bridge
+ * 3. Complete Website Theme Engine (Dark Mode <-> White/Light Mode)
+ * 4. Navbar & Mobile Menu Control
  */
 
 (function () {
   'use strict';
 
-  // 1. Initial State
+  // 1. Initial State Persistence
   var currentTheme = localStorage.getItem('site_theme') || 'dark';
   var currentLang = localStorage.getItem('site_lang') || 'en';
 
-  // Apply theme immediately to documentElement to avoid flicker
+  // Immediately apply theme to document root to avoid flash of wrong theme
   document.documentElement.setAttribute('data-theme', currentTheme);
   if (currentTheme === 'dark') {
     document.documentElement.classList.add('theme-dark');
@@ -21,7 +24,7 @@
     document.documentElement.classList.remove('theme-dark');
   }
 
-  // 2. Comprehensive Translation Dictionary (English -> Bangla)
+  // 2. Comprehensive Master Translation Dictionary (English -> Bangla)
   var I18N_DICTIONARY = {
     // Navigation & Global Actions
     "Home": "হোম",
@@ -52,20 +55,29 @@
     "Read the write-up": "বিস্তারিত পড়ুন",
     "All work": "সকল প্রকল্প",
     "Back to top": "উপরে যান",
+    "Sign In to Dashboard →": "ড্যাশবোর্ডে লগইন করুন →",
+    "Return to Public Website": "মূল ওয়েবসাইটে ফিরুন",
 
     // Profile & Hero
-    "ML Engineer & Data Science Manager": "মেশিন লার্নিং ইঞ্জিনিয়ার ও ডেটা সায়েন্স ম্যানেজার",
-    "ML Engineering · GenAI": "এমএল ইঞ্জিনিয়ারিং · জেনএআই",
     "Harrison Jansma": "কাজী রেজওয়ান রশীদ",
     "Kazi Rezwan Rashid": "কাজী রেজওয়ান রশীদ",
+    "ML Engineer & Data Science Manager": "মেশিন লার্নিং ইঞ্জিনিয়ার ও ডেটা সায়েন্স গবেষক",
+    "ML Engineering · GenAI": "এমএল ইঞ্জিনিয়ারিং · জেনএআই",
+    "Production AI systems and applied ML.": "প্রোডাকশন-গ্রেড এআই সিস্টেম এবং ফলিত মেশিন লার্নিং।",
     "I build generative-AI systems that reach production — real-time LLM tools, RAG, and NLP at scale — and lead the teams that ship them.":
-      "আমি প্রোডাকশন-গ্রেড জেনারেটিভ এআই সিস্টেম তৈরি করি — রিয়েল-টাইম এলএলএম টুলস, আরএজি এবং এনএলপি স্কেলিং — এবং এগুলো বাস্তবায়নকারী টিমকে নেতৃত্ব দিই।",
+      "আমি প্রোডাকশন-গ্রেড জেনারেটিভ এআই সিস্টেম তৈরি করি — রিয়েল-টাইম এলএলএম টুলস, আরএজি এবং এনএলপি স্কেলিং — এবং বাস্তবায়নকারী দলের নেতৃত্ব দিই।",
+    "I build production AI systems, real-time Computer Vision pipelines, and deep learning healthcare solutions.":
+      "আমি প্রোডাকশন-গ্রেড এআই সিস্টেম, রিয়েল-টাইম কম্পিউটার ভিশন পাইপলাইন এবং স্বাস্থ্যসেবায় ডিপ লার্নিং সল্যুশন নির্মাণ করি।",
 
-    // Key Stats
+    // Key Statistics
     "Years in applied AI/ML": "বছর ফলিত এআই/এমএল অভিজ্ঞতা",
-    "IEEE Research Papers": "আইইইই গবেষণা পত্র",
+    "IEEE Research Papers": "আইইইই গবেষণা পত্র প্রকাশিত",
     "Production AI Systems": "প্রোডাকশন এআই সিস্টেম",
     "Computer Science & Eng.": "কম্পিউটার সায়েন্স অ্যান্ড ইঞ্জিনিয়ারিং",
+    "Computer Science & Eng (Jahangirnagar Univ)": "কম্পিউটার সায়েন্স অ্যান্ড ইঞ্জিনিয়ারিং (জাহাঙ্গীরনগর বিশ্ববিদ্যালয়)",
+    "IEEE Research Papers Published (QPAIN)": "আইইইই গবেষণা পত্র প্রকাশিত (QPAIN)",
+    "Deep Learning & Vision Systems": "ডিপ লার্নিং ও কম্পিউটার ভিশন সিস্টেম",
+    "IELTS Band Score (L: 8.0, R: 6.5)": "আইইএলটিএস স্কোর (লিসনিং: ৮.০, রিডিং: ৬.৫)",
     "MSc & BSc": "এমএসসি ও বিএসসি",
 
     // Architecture Diagram on Hero
@@ -78,33 +90,50 @@
     "Agentic summarization": "এজেন্টিক সারাংশকরণ",
     "Procedure RAG": "প্রসিডিউর আরএজি (RAG)",
     "Frustration detection": "ফ্রাস্ট্রেশন ডিটেকশন",
-    "delivered mid-conversation": "কথোপকথনের মাঝে সরবরাহকৃত",
+    "delivered mid-conversation": "কথোপকথনের মাঝে তাৎক্ষণিক সরবরাহ",
     "Servicing agent desktop": "সার্ভিসিং এজেন্ট ডেস্কটপ",
     "The shape of three production systems below — one live audio stream, three models, sub-second delivery.":
-      "তিনটি প্রোডাকশন সিস্টেমের রূপরেখা — একটি লাইভ অডিও স্ট্রিম, তিনটি মডেল এবং সাব-সেকেন্ড ডেলিভারি।",
+      "নিচে তিনটি প্রোডাকশন সিস্টেমের রূপরেখা — একটি লাইভ অডিও স্ট্রিম, তিনটি মডেল এবং সাব-সেকেন্ড ডেলিভারি।",
 
     // Section 01: What I work on
     "01 — What I work on": "০১ — মূল কর্মক্ষেত্র",
+    "01 — Selected work": "০১ — বাছাইকৃত কাজ",
     "From research to real-time production": "গবেষণা থেকে বাস্তব উৎপাদন ব্যবস্থা",
     "The problems I love solving.": "যেসব জটিল সমস্যার সমাধান করতে আমি ভালোবাসি।",
+    "Systems in production": "বাস্তব প্রয়োগে সক্রিয় সিস্টেম",
     "Generative-AI systems": "জেনারেটিভ এআই সিস্টেম",
     "Retrieval-Augmented Generation (RAG)": "রিট্রিভাল-অগমেন্টেড জেনারেশন (RAG)",
     "Real-time streaming NLP": "রিয়েল-টাইম স্ট্রিমিং এনএলপি",
     "Credit-risk ML at scale": "লার্জ-স্কেল ক্রেডিট রিস্ক এমএল",
     "Team leadership & engineering": "টিম লিডারশিপ ও সফটওয়্যার ইঞ্জিনিয়ারিং",
     "Applied research & benchmarking": "ফলিত গবেষণা ও বেঞ্চমার্কিং",
+    "Deep Learning & Neural Networks": "ডিপ লার্নিং ও নিউরাল নেটওয়ার্ক",
+    "Computer Vision & Localization": "কম্পিউটার ভিশন ও লোকালাইজেশন",
+    "Medical Imaging & Healthcare AI": "মেডিকেল ইমেজিং ও হেলথকেয়ার এআই",
+    "Industrial AI & Safety Systems": "ইন্ডাস্ট্রিয়াল এআই ও সেফটি সিস্টেম",
+    "NLP & Explainable AI (XAI)": "এনএলপি ও ব্যাখ্যাযোগ্য এআই (XAI)",
+    "Academic Instruction & Mentorship": "একাডেমিক শিক্ষকতা ও মেন্টরশিপ",
 
     // Section 02: Skills & Tooling
     "02 — Skills & tooling": "০২ — প্রযুক্তি ও দক্ষতা",
     "The stack I reach for": "আমার ব্যবহৃত প্রযুক্তি ও টুলস",
     "Taking models to production — tap a skill to read the case study.":
       "মডেল সফলভাবে উৎপাদনে রূপান্তর — কেস স্টাডি দেখতে স্কিলে ট্যাপ করুন।",
+    "Deep Learning & Computer Vision": "ডিপ লার্নিং ও কম্পিউটার ভিশন",
+    "Programming & Full-Stack": "প্রোগ্রামিং ও ফুল-স্ট্যাক ডেভেলপমেন্ট",
+    "Data Science & Software Proficiency": "ডেটা সায়েন্স ও সফটওয়্যার দক্ষতা",
 
-    // Section 03: Selected Work
-    "03 — Selected Work": "০৩ — বাছাইকৃত প্রকল্পসমূহ",
+    // Section 03: Selected Work & Projects
+    "03 — Selected Work": "০৩ — নির্বাচিত প্রজেক্টসমূহ",
     "systems, prototype to production": "সিস্টেম, প্রোটোটাইপ থেকে পূর্ণাঙ্গ উৎপাদন",
-    "Generative AI and real-time NLP augmenting thousands of contact-center agents, credit models decisioning loans at large scale, and the earlier research and big-data work that got me there.":
-      "হাজার হাজার এজেন্টকে সাহায্যকারী জেনারেটিভ এআই ও রিয়েল-টাইম এনএলপি, লার্জ স্কেলে লোন অনুমোদনকারী ক্রেডিট মডেল এবং পূর্ববর্তী বিগ-ডেটা গবেষণার কাজ।",
+    "Radiation Leak Detection in Nuclear Power Plants": "পারমাণবিক বিদ্যুৎ কেন্দ্রে বিকিরণ ফুটো সনাক্তকরণ",
+    "Deep Learning Assisted Lung Cancer Diagnosis System": "ডিপ লার্নিং সহায়ক ফুসফুস ক্যান্সার নির্ণয় ব্যবস্থা",
+    "Endurable Sunflower Disease Recognition System": "টেকসই সূর্যমুখী রোগ শনাক্তকরণ পদ্ধতি",
+    "Neural Ensemble for Low-Resource Language Understanding": "স্বল্প-সম্পদ ভাষা বোঝার জন্য নিউরাল এনসেম্বল",
+    "Explainable Sentiment Analysis with BERT, LIME & SHAP": "BERT, LIME এবং SHAP ভিত্তিক ব্যাখ্যাযোগ্য সেন্টিমেন্ট অ্যানালাইসিস",
+    "AI-AUTHENTICATE: AI-Driven Zero-Trust Access Control": "AI-AUTHENTICATE: এআই-চালিত জিরো-ট্রাস্ট অ্যাক্সেস কন্ট্রোল",
+    "E-Commerce Website with Virtual Trial 3D System": "ভার্চুয়াল ট্রায়াল থ্রিডি সিস্টেমসহ ই-কমার্স ওয়েবসাইট",
+    "Social Network Analysis & TwitterRank Data Mining": "সোশ্যাল নেটওয়ার্ক বিশ্লেষণ ও টুইটারর‍্যাঙ্ক ডেটা মাইনিং",
     "Live Call Copilot": "লাইভ কল কোপাইলট",
 
     // Section 04: About me preview
@@ -120,9 +149,13 @@
     "Career Timeline & Journey": "কর্মজীবনের টাইমলাইন ও অভিজ্ঞতা",
     "Expand a role to see what I built there.": "বিস্তারিত দায়িত্ব দেখতে যেকোনো ভূমিকায় ক্লিক করুন।",
     "Current": "বর্তমান",
+    "Lecturer": "প্রভাষক",
+    "Teaching Assistant": "টিচিং অ্যাসিস্ট্যান্ট",
+    "Graduate Researcher": "গ্র্যাজুয়েট গবেষক",
 
     // Section 06: Photo Gallery
-    "Moments & Highlights": "স্মরণীয় মুহূর্ত ও অর্জন",
+    "06 — Photo Gallery": "০৬ — ফটো গ্যালারি",
+    "Moments & Highlights": "স্মরণীয় মুহূর্ত ও অর্জন",
     "Photo Gallery": "ছবির গ্যালারি",
     "A visual journey behind the research, conferences, university life, milestones, and memorable captures.":
       "গবেষণা, কনফারেন্স, বিশ্ববিদ্যালয় জীবন এবং স্মরণীয় অর্জনের একটি ছবির কোলাজ।",
@@ -143,7 +176,7 @@
     "Cohort group photo with distinguished faculty and fellows at the Academic Building of Engineering Staff College, Bangladesh.":
       "ইঞ্জিনিয়ারিং স্টাফ কলেজ বাংলাদেশ (ESCB) একাডেমিক ভবনের সামনে সম্মানিত শিক্ষক ও সহকর্মীদের সাথে গ্রুপ ছবি।",
 
-    // Contact Modal
+    // Contact Form & Modal
     "Get in Touch": "যোগাযোগ করুন",
     "Have a question, collaboration idea, or project to discuss? Send a message directly.":
       "কোনো প্রশ্ন, যৌথ কাজের প্রস্তাব বা প্রজেক্ট নিয়ে আলোচনা করতে সরাসরি বার্তা পাঠান।",
@@ -153,12 +186,19 @@
     "Message": "আপনার বার্তা",
     "Send Message": "বার্তা পাঠান",
     "Cancel": "বাতিল",
+    "Write your message here...": "আপনার বার্তা এখানে লিখুন...",
+    "Project Inquiry / Hello": "প্রকল্প সংক্রান্ত আলোচনা / শুভেচ্ছা",
+    "Enter your username": "আপনার ইউজারনেম লিখুন",
+    "Username": "ইউজারনেম",
+    "Password": "পাসওয়ার্ড",
 
     // Footer
     "Pages": "পেজসমূহ",
     "Elsewhere": "সামাজিক যোগাযোগ",
     "Open to conversations about generative AI and applied ML.":
       "জেনারেটিভ এআই এবং ফলিত মেশিন লার্নিং নিয়ে যেকোনো গঠনমূলক আলোচনায় আগ্রহী।",
+    "Production AI systems and applied ML": "প্রোডাকশন-গ্রেড এআই সিস্টেম এবং ফলিত মেশিন লার্নিং",
+    "All rights reserved.": "সর্বস্বত্ব সংরক্ষিত।"
   };
 
   // 3. Helper: Digits Conversion (English <-> Bangla)
@@ -195,7 +235,7 @@
       var seconds = now.getSeconds();
       var ampm = hours >= 12 ? 'অপরাহ্ন' : 'পূর্বাহ্ন';
       hours = hours % 12;
-      hours = hours ? hours : 12; // 0 should be 12
+      hours = hours ? hours : 12;
 
       var hStr = toBanglaDigits(hours < 10 ? '0' + hours : hours);
       var mStr = toBanglaDigits(minutes < 10 ? '0' + minutes : minutes);
@@ -226,7 +266,7 @@
     }
   }
 
-  // 5. Theme Switcher Controller
+  // 5. Theme Switcher Controller (Full Website Dark <-> White)
   function applyTheme(theme) {
     currentTheme = theme;
     document.documentElement.setAttribute('data-theme', theme);
@@ -262,45 +302,93 @@
   }
 
   // 6. Language Switcher (Full Website Bangla <-> English)
-  var translatedElements = [];
+  var translatedNodes = [];
 
   function translateNode(node) {
     if (node.nodeType === Node.TEXT_NODE) {
-      var trimmed = node.nodeValue.trim();
+      var raw = node.nodeValue;
+      var trimmed = raw.trim();
       if (!trimmed) return;
 
+      // Check exact match
       if (I18N_DICTIONARY[trimmed]) {
-        if (!node._origText) node._origText = node.nodeValue;
-        node.nodeValue = node.nodeValue.replace(trimmed, I18N_DICTIONARY[trimmed]);
-        translatedElements.push(node);
+        if (node._origText === undefined) node._origText = raw;
+        node.nodeValue = raw.replace(trimmed, I18N_DICTIONARY[trimmed]);
+        translatedNodes.push(node);
+        return;
+      }
+
+      // Check phrase replacements
+      var modified = raw;
+      var hasChanged = false;
+      for (var key in I18N_DICTIONARY) {
+        if (key.length > 3 && modified.indexOf(key) !== -1) {
+          if (node._origText === undefined) node._origText = raw;
+          modified = modified.split(key).join(I18N_DICTIONARY[key]);
+          hasChanged = true;
+        }
+      }
+      if (hasChanged) {
+        node.nodeValue = modified;
+        translatedNodes.push(node);
       }
     } else if (node.nodeType === Node.ELEMENT_NODE) {
-      // Skip script, style, code, pre tags
       var tag = node.tagName.toLowerCase();
       if (tag === 'script' || tag === 'style' || tag === 'code' || tag === 'pre') return;
 
-      // Handle data-trans attributes directly
+      // Handle data-trans attributes
       if (node.hasAttribute('data-trans')) {
-        var transKey = node.getAttribute('data-trans');
-        if (I18N_DICTIONARY[transKey]) {
-          if (!node._origText) node._origText = node.textContent;
-          node.textContent = I18N_DICTIONARY[transKey];
-          translatedElements.push(node);
+        var key = node.getAttribute('data-trans');
+        if (I18N_DICTIONARY[key]) {
+          if (node._origText === undefined) node._origText = node.textContent;
+          node.textContent = I18N_DICTIONARY[key];
+          translatedNodes.push(node);
         }
       }
 
-      // Check placeholder
+      // Handle input / textarea placeholder
       if (node.placeholder && I18N_DICTIONARY[node.placeholder]) {
-        if (!node._origPlaceholder) node._origPlaceholder = node.placeholder;
+        if (node._origPlaceholder === undefined) node._origPlaceholder = node.placeholder;
         node.placeholder = I18N_DICTIONARY[node.placeholder];
-        translatedElements.push(node);
+        translatedNodes.push(node);
       }
 
-      // Traverse children
+      // Handle title attribute
+      if (node.title && I18N_DICTIONARY[node.title]) {
+        if (node._origTitle === undefined) node._origTitle = node.title;
+        node.title = I18N_DICTIONARY[node.title];
+        translatedNodes.push(node);
+      }
+
+      // Recursively traverse child nodes
       var children = node.childNodes;
       for (var i = 0; i < children.length; i++) {
         translateNode(children[i]);
       }
+    }
+  }
+
+  function triggerGoogleTranslate(targetLang) {
+    var host = window.location.hostname;
+    if (targetLang === 'bn') {
+      document.cookie = "googtrans=/en/bn; path=/";
+      if (host) {
+        document.cookie = "googtrans=/en/bn; path=/; domain=" + host;
+        document.cookie = "googtrans=/en/bn; path=/; domain=." + host;
+      }
+    } else {
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=/en/en; path=/";
+      if (host) {
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + host;
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + host;
+      }
+    }
+
+    var combo = document.querySelector('.goog-te-combo');
+    if (combo) {
+      combo.value = targetLang;
+      combo.dispatchEvent(new Event('change'));
     }
   }
 
@@ -322,29 +410,34 @@
     }
 
     if (lang === 'bn') {
-      // Translate to Bangla
+      // 1. Instant client-side DOM translation
       translateNode(document.body);
+      // 2. Google Translate Bridge for full remaining content
+      triggerGoogleTranslate('bn');
     } else {
-      // Revert back to English
-      for (var i = 0; i < translatedElements.length; i++) {
-        var item = translatedElements[i];
+      // 1. Revert client-side DOM translation
+      for (var i = 0; i < translatedNodes.length; i++) {
+        var item = translatedNodes[i];
         if (item.nodeType === Node.TEXT_NODE && item._origText !== undefined) {
           item.nodeValue = item._origText;
         } else if (item.nodeType === Node.ELEMENT_NODE) {
           if (item._origText !== undefined) item.textContent = item._origText;
           if (item._origPlaceholder !== undefined) item.placeholder = item._origPlaceholder;
+          if (item._origTitle !== undefined) item.title = item._origTitle;
         }
       }
-      translatedElements = [];
+      translatedNodes = [];
+      // 2. Revert Google Translate
+      triggerGoogleTranslate('en');
     }
 
-    // Refresh Live Clock display
+    // Refresh live clock format immediately
     updateLiveClock();
   }
 
   // 7. Initialize Everything when DOM is Ready
   function initNavbarControls() {
-    // Set initial theme buttons state
+    // Apply initial theme
     applyTheme(currentTheme);
 
     // Bind Theme Buttons
@@ -379,7 +472,7 @@
     updateLiveClock();
     setInterval(updateLiveClock, 1000);
 
-    // Apply saved language if Bangla was chosen previously
+    // Apply saved language if Bangla was selected
     if (currentLang === 'bn') {
       applyLanguage('bn');
     }
