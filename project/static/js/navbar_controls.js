@@ -200,7 +200,33 @@
     "Open to conversations about generative AI and applied ML.":
       "জেনারেটিভ এআই এবং ফলিত মেশিন লার্নিং নিয়ে যেকোনো গঠনমূলক আলোচনায় আগ্রহী।",
     "Production AI systems and applied ML": "প্রোডাকশন-গ্রেড এআই সিস্টেম এবং ফলিত মেশিন লার্নিং",
-    "All rights reserved.": "সর্বস্বত্ব সংরক্ষিত।"
+    "All rights reserved.": "সর্বস্বত্ব সংরক্ষিত।",
+    "Built with Python & Django · Dynamic & Fully Customizable": "পাইথন ও জ্যাঙ্গো নির্মিত · সম্পূর্ণ কাস্টমাইজযোগ্য",
+    "Built with Python &amp; Django &middot; Dynamic &amp; Fully Customizable": "পাইথন ও জ্যাঙ্গো নির্মিত · সম্পূর্ণ কাস্টমাইজযোগ্য",
+
+    // Additional Core & Dynamic Texts
+    "Flagship generative-AI systems taken from prototype to production — starting with a public, analogous solution built with Deepgram and OpenAI tools you can try yourself.":
+      "প্রোটোটাইপ থেকে উৎপাদনে রূপান্তর করা ফ্ল্যাগশিপ জেনারেটিভ-এআই সিস্টেমসমূহ — ডিপগ্রাম এবং ওপেনএআই ভিত্তিক লাইভ সল্যুশন যা আপনি নিজেই পরীক্ষা করতে পারেন।",
+    "See all projects": "সকল প্রজেক্ট দেখুন",
+    "Run it here": "এখানে চালু করুন",
+    "opens the real app full-screen": "ফুল-স্ক্রিনে আসল অ্যাপ চালু হবে",
+    "Academic & Professional References": "একাডেমিক ও পেশাগত রেফারেন্স",
+    "Senior faculty members at Jahangirnagar University who have supervised and evaluated my research and academic journey.":
+      "জাহাঙ্গীরনগর বিশ্ববিদ্যালয়ের জ্যেষ্ঠ শিক্ষকবৃন্দ যারা আমার গবেষণা ও শিক্ষাজীবন তত্ত্বাবধান করেছেন।",
+    "References": "রেফারেন্স ও শিক্ষকবৃন্দ",
+    "Case studies": "কেস স্টাডি",
+    "Tools & Stack": "ব্যবহৃত প্রযুক্তি ও টুলস",
+    "Tools &amp; Stack": "ব্যবহৃত প্রযুক্তি ও টুলস",
+    "photos · tap to view": "টি ছবি · দেখতে ক্লিক করুন",
+    "Photos · tap to view": "টি ছবি · দেখতে ক্লিক করুন",
+    "Send a Message": "বার্তা পাঠান",
+    "Feel free to reach out about Generative AI, production ML, or potential collaborations.":
+      "জেনারেটিভ এআই, প্রোডাকশন মেশিন লার্নিং বা যেকোনো যৌথ গবেষণা ও প্রজেক্ট নিয়ে যোগাযোগ করতে পারেন।",
+    "Loading live time...": "সময় লোড হচ্ছে...",
+    "Curriculum Vitae": "জীবনবৃত্তান্ত",
+    "Machine Learning Engineer": "মেশিন লার্নিং ইঞ্জিনিয়ার",
+    "Researcher": "গবেষক",
+    "Jahangirnagar University": "জাহাঙ্গীরনগর বিশ্ববিদ্যালয়"
   };
 
   // 3. Helper: Digits Conversion (English <-> Bangla)
@@ -307,6 +333,7 @@
   var translatedNodes = [];
 
   function translateNode(node) {
+    if (!node) return;
     if (node.nodeType === Node.TEXT_NODE) {
       var raw = node.nodeValue;
       var trimmed = raw.trim();
@@ -370,20 +397,102 @@
     }
   }
 
-  function clearGoogleTranslateArtifacts() {
+  // Google Translate Helper for Full Website Dynamic Translation
+  function setGoogleTranslateCookie(lang) {
     var host = window.location.hostname;
-    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    if (host) {
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + host;
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + host;
+    var cookieVal = '/en/' + lang;
+    document.cookie = 'googtrans=' + cookieVal + '; path=/;';
+    if (host && host !== 'localhost' && host !== '127.0.0.1') {
+      document.cookie = 'googtrans=' + cookieVal + '; path=/; domain=' + host;
+      document.cookie = 'googtrans=' + cookieVal + '; path=/; domain=.' + host;
     }
-    var banner = document.querySelector('.goog-te-banner-frame');
-    if (banner) banner.remove();
-    var tooltip = document.getElementById('goog-gt-tt');
-    if (tooltip) tooltip.remove();
-    var balloon = document.querySelector('.goog-te-balloon-frame');
-    if (balloon) balloon.remove();
   }
+
+  function clearGoogleTranslateCookie() {
+    var host = window.location.hostname;
+    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'googtrans=/en/en; path=/;';
+    if (host && host !== 'localhost' && host !== '127.0.0.1') {
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + host;
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.' + host;
+      document.cookie = 'googtrans=/en/en; path=/; domain=' + host;
+      document.cookie = 'googtrans=/en/en; path=/; domain=.' + host;
+    }
+  }
+
+  function triggerGoogleTranslateCombo(lang) {
+    var select = document.querySelector('.goog-te-combo');
+    if (select) {
+      if (select.value !== lang) {
+        select.value = lang;
+        select.dispatchEvent(new Event('change'));
+      }
+      return true;
+    }
+    return false;
+  }
+
+  function syncGoogleTranslate(lang) {
+    if (lang === 'bn') {
+      setGoogleTranslateCookie('bn');
+    } else {
+      clearGoogleTranslateCookie();
+    }
+
+    if (!triggerGoogleTranslateCombo(lang)) {
+      var attempts = 0;
+      var timer = setInterval(function () {
+        attempts++;
+        if (triggerGoogleTranslateCombo(lang) || attempts >= 20) {
+          clearInterval(timer);
+        }
+      }, 200);
+    }
+  }
+
+  // 7. Complete Suppression and Removal of Google Translate Banner & Popups
+  function suppressGoogleTranslateBanner() {
+    if (document.body) {
+      if (document.body.style.top && document.body.style.top !== '0px') {
+        document.body.style.top = '0px';
+      }
+      if (document.body.style.position && document.body.style.position !== 'static') {
+        document.body.style.position = 'static';
+      }
+    }
+    var selectors = [
+      '.goog-te-banner-frame',
+      'iframe.goog-te-banner-frame',
+      'iframe.skiptranslate',
+      '.VIpgJd-ZVi9od-ORHb-OEVmcd',
+      '.VIpgJd-ZVi9od-ORHb-OEVmcd-ti6hGc',
+      '#goog-gt-tt',
+      '#goog-gt-vt',
+      '.goog-tooltip',
+      '.goog-te-balloon-frame'
+    ];
+    selectors.forEach(function (sel) {
+      var elements = document.querySelectorAll(sel);
+      elements.forEach(function (el) {
+        if (el && el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
+      });
+    });
+  }
+
+  if (typeof MutationObserver !== 'undefined') {
+    var googleBannerObserver = new MutationObserver(function () {
+      suppressGoogleTranslateBanner();
+    });
+    if (document.documentElement) {
+      googleBannerObserver.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    }
+  }
+  setInterval(suppressGoogleTranslateBanner, 250);
 
   function applyLanguage(lang) {
     currentLang = lang;
@@ -402,14 +511,13 @@
       }
     }
 
-    // Clean up any external Google Translate tooltips or bars
-    clearGoogleTranslateArtifacts();
-
     if (lang === 'bn') {
-      // Instant clean client-side translation
-      translateNode(document.body);
+      // 1. Instant client-side translation of all core navigation, headings, and labels
+      if (document.body) translateNode(document.body);
+      // 2. Full-page translation engine bridge (Google Translate) for dynamic database content & text
+      syncGoogleTranslate('bn');
     } else {
-      // Revert clean client-side translation back to original English
+      // 1. Revert client-side translated nodes back to original English
       for (var i = 0; i < translatedNodes.length; i++) {
         var item = translatedNodes[i];
         if (item.nodeType === Node.TEXT_NODE && item._origText !== undefined) {
@@ -421,6 +529,9 @@
         }
       }
       translatedNodes = [];
+
+      // 2. Revert full-page translation engine bridge back to English
+      syncGoogleTranslate('en');
     }
 
     // Refresh live clock format immediately

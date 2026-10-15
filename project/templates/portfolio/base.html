@@ -113,6 +113,44 @@
     .top-auth-dash { background: linear-gradient(120deg, #4f46e5, #7c3aed); color: #ffffff; }
     .top-auth-logout { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px 8px; }
     .top-auth-logout:hover { background: #ef4444; color: #ffffff; }
+
+    /* Permanent suppression of Google Translate top banner, toolbars, and popups */
+    .goog-te-banner-frame,
+    .goog-te-banner-frame.skiptranslate,
+    iframe.goog-te-banner-frame,
+    iframe.skiptranslate,
+    iframe[id*=":1.container"],
+    iframe[id*=":2.container"],
+    iframe[id*="goog"],
+    .VIpgJd-ZVi9od-ORHb-OEVmcd,
+    .VIpgJd-ZVi9od-ORHb-OEVmcd-ti6hGc,
+    .VIpgJd-ZVi9od-l4eHX-hSRLGd,
+    .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+    .VIpgJd-y6EKec,
+    #goog-gt-tt,
+    #goog-gt-vt,
+    .goog-tooltip,
+    .goog-tooltip:hover,
+    .goog-te-balloon-frame {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      height: 0 !important;
+      width: 0 !important;
+      pointer-events: none !important;
+      clip: rect(0, 0, 0, 0) !important;
+    }
+    body {
+      top: 0px !important;
+      position: static !important;
+    }
+    .goog-text-highlight,
+    font[style] {
+      background: transparent !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
   </style>
 
   <script>
@@ -351,6 +389,21 @@
     </div>
     <button class="lightbox-next" type="button" data-lightbox-step="1" aria-label="Next">&rsaquo;</button>
   </div>
+
+  <!-- Google Translate Element Bridge for Full Dynamic Page Translation -->
+  <div id="google_translate_element" style="display:none;" aria-hidden="true"></div>
+  <script>
+    function googleTranslateElementInit() {
+      if (window.google && window.google.translate) {
+        new window.google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,bn',
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
 
   <!-- Scripts -->
   <script src="{% static 'js/site.js' %}?v=20261014_v6"></script>

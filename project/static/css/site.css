@@ -2596,6 +2596,457 @@ a.ref-link.pill:hover{
   }
 }
 
+/* ==============================================================
+   COMPREHENSIVE DARK MODE CONTRAST & LEGIBILITY FIXES
+   Guarantees 100% crystal-clear readability for all text, headings,
+   cards, buttons, tags, forms, and timeline components in Dark Mode.
+   ============================================================== */
+html[data-theme="dark"],
+body.theme-dark {
+  --ink: #ffffff !important;
+  --ink-soft: #cbd5e1 !important;
+  --muted: #94a3b8 !important;
+  --line: #1e293b !important;
+  --line-strong: #334155 !important;
+  --bg: #070a12 !important;
+  --bg-tint: #0b0f19 !important;
+  --dark: #050810 !important;
+  --dark-soft: #cbd5e1 !important;
+  --micro: #94a3b8 !important;
+  --index: #64748b !important;
+  background-color: #070a12 !important;
+  color: #cbd5e1 !important;
+  color-scheme: dark;
+}
+
+/* 1. Global Page Backgrounds & Section Banding */
+html[data-theme="dark"] body {
+  background-color: #070a12 !important;
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .grid-bg {
+  background-color: #080c16 !important;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) !important;
+  border-bottom-color: #1e293b !important;
+}
+html[data-theme="dark"] .banded {
+  background: #0b0f19 !important;
+  border-top-color: #1e293b !important;
+  border-bottom-color: #1e293b !important;
+}
+html[data-theme="dark"] .tint {
+  background: #0b0f19 !important;
+}
+
+/* 2. Global Headings & Typography */
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6,
+html[data-theme="dark"] .sechead h2 {
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] p,
+html[data-theme="dark"] .hero-lead,
+html[data-theme="dark"] .sechead p,
+html[data-theme="dark"] .sechead-sub,
+html[data-theme="dark"] .intro-lead,
+html[data-theme="dark"] .intro-body p,
+html[data-theme="dark"] .about-body p,
+html[data-theme="dark"] .page-head > p,
+html[data-theme="dark"] .post-body p,
+html[data-theme="dark"] .post-body li {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .kicker {
+  color: #818cf8 !important;
+}
+html[data-theme="dark"] .micro {
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] .pull-quote {
+  color: #f1f5f9 !important;
+}
+html[data-theme="dark"] .lede {
+  color: #f1f5f9 !important;
+}
+
+/* 3. Hero Section Contrast */
+html[data-theme="dark"] .hero-h1 {
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 35%, #a5b4fc 60%, #c084fc 80%, #ffffff 100%) !important;
+  background-size: 250% auto !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .status-chip {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .stats > div {
+  background: rgba(15, 23, 42, 0.85) !important;
+  border-color: #1e293b !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45) !important;
+}
+html[data-theme="dark"] .stats > div:hover {
+  background: #151f33 !important;
+  border-color: rgba(99, 102, 241, 0.4) !important;
+}
+html[data-theme="dark"] .stats > div .stat-num {
+  background: linear-gradient(120deg, #818cf8 0%, #c084fc 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #818cf8 !important;
+}
+html[data-theme="dark"] .stats > div .stat-lbl {
+  color: #cbd5e1 !important;
+}
+
+/* 4. Section 01: Work & Featured Project */
+html[data-theme="dark"] .featured {
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.12), rgba(15, 23, 42, 0.95)) !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+html[data-theme="dark"] .featured h3 {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .featured p {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .browser {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+}
+html[data-theme="dark"] .browser-bar {
+  background: #111827 !important;
+  border-bottom-color: #1e293b !important;
+}
+html[data-theme="dark"] .browser-url {
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] .row-link {
+  border-bottom-color: #1e293b !important;
+}
+html[data-theme="dark"] .row-link:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+html[data-theme="dark"] .row-link h3,
+html[data-theme="dark"] .row-link .row-title {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .row-link p,
+html[data-theme="dark"] .row-link .row-desc {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .row-index {
+  color: #64748b !important;
+}
+html[data-theme="dark"] .row-cat {
+  color: #818cf8 !important;
+}
+html[data-theme="dark"] .row-metrics b {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .row-metrics span {
+  color: #94a3b8 !important;
+}
+
+/* 5. Section 02: What I Work On Grid */
+html[data-theme="dark"] .grid-six {
+  background: #1e293b !important;
+  border-color: #1e293b !important;
+}
+html[data-theme="dark"] .grid-six > div {
+  background: #0f172a !important;
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .grid-six > div:hover {
+  background: #151f33 !important;
+}
+html[data-theme="dark"] .grid-six h4 {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .grid-six p {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .icon-tile {
+  background: rgba(99, 102, 241, 0.16) !important;
+  color: #a5b4fc !important;
+}
+
+/* 6. Section 03: Skills & Tooling Cards */
+html[data-theme="dark"] .skill-card {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.6) !important;
+}
+html[data-theme="dark"] .skill-card:hover {
+  border-color: rgba(99, 102, 241, 0.45) !important;
+  box-shadow: 0 16px 36px -10px rgba(99, 102, 241, 0.25) !important;
+}
+html[data-theme="dark"] .skill-head h4 {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .skill-links .skill-link {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #e2e8f0 !important;
+}
+html[data-theme="dark"] .skill-links .skill-link:hover {
+  background: rgba(99, 102, 241, 0.2) !important;
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .skill-links .skill-link i {
+  color: #a5b4fc !important;
+}
+html[data-theme="dark"] .skill-tools {
+  border-top-color: #1e293b !important;
+}
+html[data-theme="dark"] .chip-tool {
+  background: #161f30 !important;
+  border-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .chip-tool:hover {
+  background: rgba(99, 102, 241, 0.25) !important;
+  color: #ffffff !important;
+  border-color: #818cf8 !important;
+}
+html[data-theme="dark"] .pill {
+  background: rgba(99, 102, 241, 0.18) !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+  color: #c7d2fe !important;
+}
+html[data-theme="dark"] a.pill:hover {
+  background: rgba(99, 102, 241, 0.3) !important;
+  color: #ffffff !important;
+}
+
+/* 7. Timeline & Career Experience */
+html[data-theme="dark"] .tl-rail::before {
+  background: #1e293b !important;
+}
+html[data-theme="dark"] .tl-node {
+  background: #0f172a !important;
+  border-color: #818cf8 !important;
+}
+html[data-theme="dark"] .tl-year {
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] .tl-year--current {
+  color: #818cf8 !important;
+}
+html[data-theme="dark"] .tl-title {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .tl-org {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .tl-org-link {
+  color: #a5b4fc !important;
+}
+html[data-theme="dark"] .tl-org-link:hover {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .tl-note {
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] .tl-current-card {
+  background: linear-gradient(180deg, rgba(99, 102, 241, 0.14), rgba(124, 58, 237, 0.05)) !important;
+  border-color: rgba(99, 102, 241, 0.4) !important;
+}
+html[data-theme="dark"] .exp-btn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+html[data-theme="dark"] .exp-panel p {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .exp-stack {
+  color: #a5b4fc !important;
+}
+html[data-theme="dark"] .tl-body p {
+  color: #cbd5e1 !important;
+}
+
+/* 8. References Section */
+html[data-theme="dark"] .ref-card,
+html[data-theme="dark"] .ref-card-pro {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .ref-name,
+html[data-theme="dark"] .ref-card-pro__name {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .ref-qual,
+html[data-theme="dark"] .ref-card-pro__quals {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .ref-desig {
+  background: rgba(99, 102, 241, 0.16) !important;
+  color: #a5b4fc !important;
+}
+html[data-theme="dark"] .ref-dept,
+html[data-theme="dark"] .ref-inst,
+html[data-theme="dark"] .ref-card-pro__affiliation {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .ref-address {
+  color: #94a3b8 !important;
+}
+html[data-theme="dark"] .ref-contact {
+  border-top-color: #1e293b !important;
+}
+html[data-theme="dark"] .ref-contact-label {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .ref-link {
+  color: #a5b4fc !important;
+}
+html[data-theme="dark"] .ref-link:hover {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] a.ref-link.pill {
+  background: rgba(99, 102, 241, 0.18) !important;
+  color: #c7d2fe !important;
+}
+
+/* 9. Buttons, Filters, Socials */
+html[data-theme="dark"] .btn--ghost {
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+  background: #0f172a !important;
+}
+html[data-theme="dark"] .btn--ghost:hover {
+  background: rgba(99, 102, 241, 0.2) !important;
+  border-color: #818cf8 !important;
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .filter {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .filter:hover {
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .filter.is-active {
+  background: var(--grad) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+html[data-theme="dark"] .social {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .social:hover {
+  background: var(--grad) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+/* 10. Metric Strip & Project Detail Elements */
+html[data-theme="dark"] .metric-strip div {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+}
+html[data-theme="dark"] .metric-strip div b {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .metric-strip div span {
+  color: #94a3b8 !important;
+}
+
+/* 11. Contact Modal & Input Fields */
+html[data-theme="dark"] .contact-card {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8) !important;
+  color: #f8fafc !important;
+}
+html[data-theme="dark"] .contact-field label {
+  color: #e2e8f0 !important;
+}
+html[data-theme="dark"] .contact-field input,
+html[data-theme="dark"] .contact-field textarea {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .contact-field input::placeholder,
+html[data-theme="dark"] .contact-field textarea::placeholder {
+  color: #64748b !important;
+}
+html[data-theme="dark"] .contact-field input:focus,
+html[data-theme="dark"] .contact-field textarea:focus {
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* 12. Dividers & Borders */
+html[data-theme="dark"] .sechead--work,
+html[data-theme="dark"] .sechead--exp,
+html[data-theme="dark"] .sechead--group,
+html[data-theme="dark"] .rows,
+html[data-theme="dark"] .home-exp-section,
+html[data-theme="dark"] .home-gallery-section {
+  border-color: #1e293b !important;
+}
+
+/* 13. Absolute Suppression of Google Translate Top Banner, Popups, and Tooltips */
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+iframe.goog-te-banner-frame,
+iframe.skiptranslate,
+iframe[id*=":1.container"],
+iframe[id*=":2.container"],
+iframe[id*="goog"],
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-ORHb-OEVmcd-ti6hGc,
+.VIpgJd-ZVi9od-l4eHX-hSRLGd,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-y6EKec,
+#goog-gt-tt,
+#goog-gt-vt,
+.goog-tooltip,
+.goog-tooltip:hover,
+.goog-te-balloon-frame {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  pointer-events: none !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+body {
+  top: 0px !important;
+  position: static !important;
+}
+.goog-text-highlight,
+font[style] {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
 
 
 
