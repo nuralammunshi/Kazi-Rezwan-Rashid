@@ -3009,14 +3009,10 @@ html[data-theme="dark"] .home-gallery-section {
   border-color: #1e293b !important;
 }
 
-/* 13. Absolute Suppression of Google Translate Top Banner, Popups, and Tooltips */
+/* 13. Absolute Suppression of Google Translate Top Banner, Popups, and Tooltips without killing engine */
 .goog-te-banner-frame,
 .goog-te-banner-frame.skiptranslate,
 iframe.goog-te-banner-frame,
-iframe.skiptranslate,
-iframe[id*=":1.container"],
-iframe[id*=":2.container"],
-iframe[id*="goog"],
 .VIpgJd-ZVi9od-ORHb-OEVmcd,
 .VIpgJd-ZVi9od-ORHb-OEVmcd-ti6hGc,
 .VIpgJd-ZVi9od-l4eHX-hSRLGd,
@@ -3031,9 +3027,7 @@ iframe[id*="goog"],
   visibility: hidden !important;
   opacity: 0 !important;
   height: 0 !important;
-  width: 0 !important;
   pointer-events: none !important;
-  clip: rect(0, 0, 0, 0) !important;
 }
 body {
   top: 0px !important;

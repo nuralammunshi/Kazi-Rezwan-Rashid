@@ -770,31 +770,22 @@ html[data-theme="light"] .site-footer .footer-bottom { border-top-color: #e2e8f0
 html[data-theme="light"] .site-footer .footer-bottom span { color: #64748b !important; }
 html[data-theme="light"] .site-footer .footer-bottom a { color: #4f46e5 !important; }
 
-/* Suppress Google Translate intrusive bars, popups, and badges */
+/* Suppress Google Translate top banner, tooltips, and balloon without disabling engine iframe */
 .goog-te-banner-frame.skiptranslate,
 .goog-te-banner-frame,
 iframe.goog-te-banner-frame,
-iframe.skiptranslate,
-iframe[id*=":1.container"],
-iframe[id*=":2.container"],
-iframe[id*="goog"],
-.VIpgJd-ZVi9od-ORHb-OEVmcd,
-.VIpgJd-ZVi9od-ORHb-OEVmcd-ti6hGc,
-.VIpgJd-ZVi9od-l4eHX-hSRLGd,
-.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
-.VIpgJd-y6EKec,
 #goog-gt-tt,
 #goog-gt-vt,
 .goog-tooltip,
 .goog-tooltip:hover,
-.goog-te-balloon-frame {
+.goog-te-balloon-frame,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-ORHb-OEVmcd-ti6hGc {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   height: 0 !important;
-  width: 0 !important;
   pointer-events: none !important;
-  clip: rect(0, 0, 0, 0) !important;
 }
 body {
   top: 0px !important;
@@ -806,6 +797,28 @@ font[style] {
   background-color: transparent !important;
   box-shadow: none !important;
   border: none !important;
+}
+
+/* Elegant Bangla Typography */
+html[lang="bn"],
+html[lang="bn"] body,
+html[lang="bn"] .hero-h1,
+html[lang="bn"] h1,
+html[lang="bn"] h2,
+html[lang="bn"] h3,
+html[lang="bn"] h4,
+html[lang="bn"] .nav-link,
+html[lang="bn"] .btn,
+html[lang="bn"] p,
+html[lang="bn"] .tl-title,
+html[lang="bn"] .row-title,
+html[lang="bn"] .row-desc {
+  font-family: 'Hind Siliguri', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+html[lang="bn"] .brand-kicker,
+html[lang="bn"] .kicker,
+html[lang="bn"] .micro {
+  letter-spacing: 0.04em !important;
 }
 
 @media (max-width: 768px) {

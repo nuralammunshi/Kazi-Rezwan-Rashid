@@ -11,10 +11,76 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
   
   <style>
+    html[lang="bn"],
+    html[lang="bn"] * {
+      letter-spacing: 0 !important;
+      letter-spacing: normal !important;
+      text-transform: none !important;
+    }
+    html[lang="bn"] body,
+    html[lang="bn"] .cv-title,
+    html[lang="bn"] .sheet-name,
+    html[lang="bn"] .sheet-sec-title,
+    html[lang="bn"] .sheet-item-role,
+    html[lang="bn"] .sheet-item-org,
+    html[lang="bn"] .btn-action,
+    html[lang="bn"] p,
+    html[lang="bn"] span {
+      font-family: 'Hind Siliguri', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+      line-height: 1.55 !important;
+    }
+
+    /* Language Switcher Button Group */
+    .lang-switcher {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 4px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .lang-btn:hover { color: #fff; }
+    .lang-btn.is-active {
+      background: #4f46e5;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+    }
+    .lang-sep {
+      color: rgba(255, 255, 255, 0.25);
+      font-size: 11px;
+    }
+
+    /* Suppress Google Translate Banner */
+    .goog-te-banner-frame.skiptranslate,
+    .goog-te-banner-frame,
+    iframe.goog-te-banner-frame,
+    #goog-gt-tt,
+    #goog-gt-vt,
+    .goog-tooltip,
+    .goog-te-balloon-frame {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
     :root {
       --bg-dark: #07090e;
       --bg-card: #0d121f;
@@ -957,6 +1023,17 @@
 
     <!-- Right Actions -->
     <div class="toolbar-right">
+      <!-- Language Switcher: English / Bangla -->
+      <div class="lang-switcher" id="langSwitcher" role="group" aria-label="Language selection" style="margin-right: 4px;">
+        <button type="button" class="lang-btn is-active" data-lang="en" id="langBtnEn" title="English">
+          <span>🇬🇧</span> EN
+        </button>
+        <span class="lang-sep">/</span>
+        <button type="button" class="lang-btn" data-lang="bn" id="langBtnBn" title="বাংলা">
+          <span>🇧🇩</span> বাং
+        </button>
+      </div>
+
       <button class="btn-action btn-ghost-action" type="button" id="openRefModalBtn" title="Academic & Professional References">
         <span class="lnr lnr-users"></span>
         <span>References</span>
@@ -1353,5 +1430,23 @@
 
     })();
   </script>
+
+  <!-- Google Translate Element Bridge & Navbar Controls -->
+  <div id="google_translate_element" style="position: fixed; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;" aria-hidden="true"></div>
+  <script>
+    function googleTranslateElementInit() {
+      if (window.google && window.google.translate) {
+        try {
+          new window.google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,bn',
+            autoDisplay: false
+          }, 'google_translate_element');
+        } catch(e) {}
+      }
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script src="{% static 'js/navbar_controls.js' %}?v=20261014_v7"></script>
 </body>
 </html>

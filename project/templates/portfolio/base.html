@@ -22,16 +22,16 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="{% static 'img/main_thumbnail.jpg' %}">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts (Hind Siliguri for Bangla, Inter & Space Grotesk for English) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <!-- Core CSS -->
   <link rel="stylesheet" href="{% static 'css/linearicons.css' %}">
   <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/chrome.css' %}?v=20261014_v6">
-  <link rel="stylesheet" href="{% static 'css/site.css' %}?v=20261014_v6">
+  <link rel="stylesheet" href="{% static 'css/chrome.css' %}?v=20261016_v8">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}?v=20261016_v8">
 
   <style>
     /* Contact Modal & UI Polish */
@@ -114,19 +114,10 @@
     .top-auth-logout { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px 8px; }
     .top-auth-logout:hover { background: #ef4444; color: #ffffff; }
 
-    /* Permanent suppression of Google Translate top banner, toolbars, and popups */
+    /* Clean suppression of Google Translate top banner without breaking engine */
     .goog-te-banner-frame,
     .goog-te-banner-frame.skiptranslate,
     iframe.goog-te-banner-frame,
-    iframe.skiptranslate,
-    iframe[id*=":1.container"],
-    iframe[id*=":2.container"],
-    iframe[id*="goog"],
-    .VIpgJd-ZVi9od-ORHb-OEVmcd,
-    .VIpgJd-ZVi9od-ORHb-OEVmcd-ti6hGc,
-    .VIpgJd-ZVi9od-l4eHX-hSRLGd,
-    .VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
-    .VIpgJd-y6EKec,
     #goog-gt-tt,
     #goog-gt-vt,
     .goog-tooltip,
@@ -136,9 +127,7 @@
       visibility: hidden !important;
       opacity: 0 !important;
       height: 0 !important;
-      width: 0 !important;
       pointer-events: none !important;
-      clip: rect(0, 0, 0, 0) !important;
     }
     body {
       top: 0px !important;
@@ -150,6 +139,26 @@
       background-color: transparent !important;
       box-shadow: none !important;
       border: none !important;
+    }
+
+    /* Bengali Typography & Legibility Overrides */
+    html[lang="bn"],
+    html[lang="bn"] * {
+      letter-spacing: 0 !important;
+      letter-spacing: normal !important;
+      word-spacing: normal !important;
+      text-transform: none !important;
+    }
+    html[lang="bn"] body,
+    html[lang="bn"] h1, html[lang="bn"] h2, html[lang="bn"] h3, html[lang="bn"] h4, html[lang="bn"] h5, html[lang="bn"] h6,
+    html[lang="bn"] p, html[lang="bn"] a, html[lang="bn"] span, html[lang="bn"] button, html[lang="bn"] label, html[lang="bn"] b,
+    html[lang="bn"] .kicker, html[lang="bn"] .brand-kicker, html[lang="bn"] .micro, html[lang="bn"] .stat-lbl, html[lang="bn"] .nav-link,
+    html[lang="bn"] .hero-h1, html[lang="bn"] .tl-title, html[lang="bn"] .tl-org, html[lang="bn"] .row-title, html[lang="bn"] .row-desc {
+      font-family: 'Hind Siliguri', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      line-height: 1.6 !important;
+    }
+    html[lang="bn"] .hero-h1 {
+      line-height: 1.35 !important;
     }
   </style>
 
@@ -391,23 +400,27 @@
   </div>
 
   <!-- Google Translate Element Bridge for Full Dynamic Page Translation -->
-  <div id="google_translate_element" style="display:none;" aria-hidden="true"></div>
+  <div id="google_translate_element" style="position: fixed; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;" aria-hidden="true"></div>
   <script>
     function googleTranslateElementInit() {
       if (window.google && window.google.translate) {
-        new window.google.translate.TranslateElement({
-          pageLanguage: 'en',
-          includedLanguages: 'en,bn',
-          autoDisplay: false
-        }, 'google_translate_element');
+        try {
+          new window.google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,bn',
+            autoDisplay: false
+          }, 'google_translate_element');
+        } catch(e) {
+          console.warn('Google Translate init:', e);
+        }
       }
     }
   </script>
-  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
   <!-- Scripts -->
   <script src="{% static 'js/site.js' %}?v=20261014_v6"></script>
-  <script src="{% static 'js/navbar_controls.js' %}?v=20261014_v6"></script>
+  <script src="{% static 'js/navbar_controls.js' %}?v=20261016_v9"></script>
   <script>
     // Contact Modal Toggle
     (function() {
