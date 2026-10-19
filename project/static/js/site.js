@@ -350,17 +350,7 @@
         if (p.y < -30) p.y = height + 30;
         else if (p.y > height + 30) p.y = -30;
 
-        // Mouse breeze interaction (deflect gracefully like wind)
-        if (mouse.active) {
-          var mdx = p.x - mouse.x;
-          var mdy = p.y - mouse.y;
-          var mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-          if (mdist < 160 && mdist > 0) {
-            var pushForce = (1 - mdist / 160) * 1.4;
-            p.x += (mdx / mdist) * pushForce;
-            p.y += (mdy / mdist) * pushForce;
-          }
-        }
+
 
         // Keep trail points for aerodynamic flight slipstream
         p.trail.unshift({ x: p.x, y: p.y });
@@ -444,15 +434,7 @@
 
     var heroEl = canvas.closest('.hero');
     if (heroEl) {
-      heroEl.addEventListener('mousemove', function (e) {
-        var rect = canvas.getBoundingClientRect();
-        mouse.x = e.clientX - rect.left;
-        mouse.y = e.clientY - rect.top;
-        mouse.active = true;
-      });
-      heroEl.addEventListener('mouseleave', function () {
-        mouse.active = false;
-      });
+
       heroEl.addEventListener('click', function (e) {
         var rect = canvas.getBoundingClientRect();
         ripples.push({
@@ -502,28 +484,9 @@
     draw();
   }
 
-  /*--------------------  Hero & Interactive 3D Card Tilt  --------------------*/
+  /*--------------------  Card Hover Physics  --------------------*/
   function armHeroCards() {
-    if (reduced) return;
-    var cards = document.querySelectorAll('.skill-card, .grid-six > div, .ref-card, .ref-card-pro, .arch-terminal-card, .metric-strip > div');
-    if (!cards.length) return;
-
-    cards.forEach(function (card) {
-      card.addEventListener('mousemove', function (e) {
-        var rect = card.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        var centerX = rect.width / 2;
-        var centerY = rect.height / 2;
-        var rotateX = ((y - centerY) / centerY) * -4.5;
-        var rotateY = ((x - centerX) / centerX) * 4.5;
-        card.style.transform = 'perspective(900px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) translateY(-4px)';
-      });
-
-      card.addEventListener('mouseleave', function () {
-        card.style.transform = '';
-      });
-    });
+    /* Pure CSS-driven hover animations, no mouse tracking */
   }
 
   /*--------------------  Copy to Clipboard Handler  --------------------*/
@@ -573,24 +536,8 @@
     }
   }
 
-  /*--------------------  Interactive Card Spotlight (Linear/Stripe style)  --------------------*/
   function armCardSpotlight() {
-    var cards = document.querySelectorAll('.ref-card, .ref-card-pro, .skill-card, .grid-six > div, .browser, .metric-strip > div, .row-link');
-    if (!cards.length) return;
-
-    cards.forEach(function (card) {
-      card.addEventListener('mousemove', function (e) {
-        var rect = card.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', x + 'px');
-        card.style.setProperty('--mouse-y', y + 'px');
-      });
-      card.addEventListener('mouseleave', function () {
-        card.style.removeProperty('--mouse-x');
-        card.style.removeProperty('--mouse-y');
-      });
-    });
+    /* Replaced with pure CSS shine sweep & glow animations */
   }
 
   /*--------------------  Animated Dynamic Stat Counters  --------------------*/
@@ -813,43 +760,6 @@
     } catch (err) {}
   }
 
-  /*--------------------  Interactive Cyber Glow Cursor Follower  --------------------*/
-  function armCursorGlow() {
-    if (reduced || window.innerWidth < 768) return;
-
-    var orb = document.createElement('div');
-    orb.className = 'cyber-cursor-glow';
-    document.body.appendChild(orb);
-
-    var posX = window.innerWidth / 2;
-    var posY = window.innerHeight / 2;
-    var mouseX = posX;
-    var mouseY = posY;
-
-    window.addEventListener('mousemove', function (e) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    var interactives = document.querySelectorAll('a, button, .skill-card, .ref-card, .grid-six > div, .row-link, .hero-avatar');
-    interactives.forEach(function (el) {
-      el.addEventListener('mouseenter', function () {
-        orb.classList.add('is-hovering');
-      });
-      el.addEventListener('mouseleave', function () {
-        orb.classList.remove('is-hovering');
-      });
-    });
-
-    function update() {
-      posX += (mouseX - posX) * 0.14;
-      posY += (mouseY - posY) * 0.14;
-      orb.style.transform = 'translate3d(' + (posX - 180) + 'px, ' + (posY - 180) + 'px, 0)';
-      requestAnimationFrame(update);
-    }
-    requestAnimationFrame(update);
-  }
-
   function init() {
     if (!reduced) {
       document.documentElement.classList.add('js-reveal');
@@ -859,17 +769,14 @@
     armHeaderScroll();
     armBackToTop();
     armHeroCanvas();
-    armHeroCards();
     armNav();
     armDemo();
     armFilters();
     armExpanders();
     armLightbox();
     armCopyButtons();
-    armCardSpotlight();
     armStatCounters();
     armSecurity();
-    armCursorGlow();
   }
 
   if (document.readyState === 'loading') {

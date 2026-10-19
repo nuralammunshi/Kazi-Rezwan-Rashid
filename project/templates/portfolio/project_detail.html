@@ -57,11 +57,11 @@
   .post-body { padding-top: 50px; padding-bottom: 70px; }
   .post-body h2 { font-family: 'Space Grotesk', sans-serif; margin-top: 44px; margin-bottom: 16px; font-size: 1.85rem; letter-spacing: -0.02em; }
   .post-body h2:first-of-type { margin-top: 0; }
-  .post-body p { font-size: 16px; line-height: 1.8; margin-bottom: 18px; color: var(--muted, #4b5563); }
+  .post-body p { font-size: 16px; line-height: 1.8; margin-bottom: 18px; color: var(--ink-soft); }
   .post-body ul { margin-bottom: 20px; padding-left: 24px; }
-  .post-body li { font-size: 16px; line-height: 1.7; margin-bottom: 8px; color: var(--muted, #4b5563); }
-  .post-body a { color: #4f46e5; text-decoration: underline; text-underline-offset: 2px; transition: color 0.2s; }
-  .post-body a:hover { color: #3730a3; }
+  .post-body li { font-size: 16px; line-height: 1.7; margin-bottom: 8px; color: var(--ink-soft); }
+  .post-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; transition: color 0.2s; }
+  .post-body a:hover { color: var(--accent-ink); }
   
   .post-hero {
     position: relative;
@@ -78,11 +78,11 @@
   }
   .post-hero img { display: block; width: 100%; height: auto; transition: transform 0.5s ease; }
   .post-hero:hover img { transform: scale(1.015); }
-  .hero-caption { font-size: 13px; color: #6b7280; text-align: center; margin-bottom: 30px; font-family: var(--mono, monospace); }
+  .hero-caption { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 30px; font-family: var(--mono, monospace); }
   
   .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin: 26px 0 20px; }
-  .kicker { text-transform: uppercase; letter-spacing: .18em; font-size: 12px; font-weight: 700; color: #6366f1; margin-bottom: 8px; }
-  .lede { font-size: 19px !important; line-height: 1.7 !important; color: #1f2937 !important; font-weight: 400; }
+  .kicker { text-transform: uppercase; letter-spacing: .18em; font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+  .lede { font-size: 19px !important; line-height: 1.7 !important; color: var(--ink-soft) !important; font-weight: 400; }
   
   /* System Architecture Terminal Block */
   .arch-terminal-card {
@@ -298,7 +298,7 @@
         </div>
         <h1 data-reveal="right" style="margin-bottom: 10px;">{{ project.title }}</h1>
         {% if project.category_label %}
-          <span class="pill pill--lg" style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border-color: rgba(99, 102, 241, 0.35);">
+          <span class="pill pill--lg">
             {{ project.category_label }}
           </span>
         {% endif %}

@@ -342,7 +342,7 @@
               </span>
             </div>
             {% if exp.highlight_note %}<div class="tl-note" style="margin-top: 4px;">{{ exp.highlight_note }}</div>{% endif %}
-            {% if exp.description %}<p style="margin-top: 8px; font-size: 14px; color: #94a3b8;">{{ exp.description|truncatewords:25 }}</p>{% endif %}
+            {% if exp.description %}<p class="tl-home-desc">{{ exp.description|truncatewords:25 }}</p>{% endif %}
           </div>
         </div>
       {% endfor %}
@@ -444,7 +444,7 @@
         </p>
       </div>
       <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-        <span style="font-family: var(--mono); font-size: 0.88rem; color: var(--muted); background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line);">
+        <span class="gallery-count-pill">
           {{ gallery_items|length }} photos &middot; tap to view
         </span>
         {% if user.is_authenticated and user.is_staff %}
